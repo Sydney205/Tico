@@ -1,0 +1,152 @@
+{% extends "layout.html" %} {% block body %}
+  <div id="boardContainer" class="w-3/4 grid grid-cols-3 gap-2 dark:text-white text-dark">
+    <button 
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      id="cell_0"
+    ></button>
+    <button 
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      id="cell_1"
+    ></button>
+    <button 
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      id="cell_2"
+    ></button>
+    
+    <button 
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      id="cell_3"
+    ></button>
+    <button 
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      id="cell_4"
+    ></button>
+    <button 
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      id="cell_5"
+    ></button>
+    
+    <button 
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      id="cell_6"
+    ></button>
+    <button 
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      id="cell_7"
+    ></button>
+    <button 
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      id="cell_8"
+    ></button>
+  </div>
+
+  <p id="Ref"></p>
+
+  <ul id="messages" class="bg-red-700"></ul>
+  <form id="form" class="absolute bottom-5 w-4/5 bg-indigo-600 h-max p-4 rounded-md flex justify-between items-center">
+    <input type="text" name="input" id="input" class="bg-transparent focus:outline-none outline-none" placeholder="Chat..."/>
+
+    <button type="submit">
+      <svg viewBox="0 0 24 24" width="30" height="30">
+        <path fill="none" d="M0 0h24v24H0z"></path>
+        <path fill="#fff" d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"></path>
+      </svg>
+    </button>
+  </form>
+  
+  <script src="../socket.io/socket.io.js"></script>
+  <script>
+    const socket = io('http://localhost:3000');
+    const roomName = window.location.pathname.substring(1);
+
+    socket.emit('joinroom', `${roomName}`);
+
+    const form = document.getElementById('form');
+    const input = document.getElementById('input');
+    const messages = document.getElementById('messages');
+    const cells = document.getElementsByClassName('cells');
+    const ref = document.getElementById('Ref');
+
+    function checkGame(p) {
+      const combinations = [
+         [0, 1, 2], /********/
+         [3, 4, 5], /* rows */
+         [6, 7, 8], /********/
+        
+         [0, 3, 6], /***********/
+         [1, 4, 7], /* columns */
+         [2, 5, 8], /***********/
+        
+         [0, 4, 8], /* diagonals */
+         [2, 4, 6], /*************/
+      ];
+
+      for (let i=0;i<combinations.length;i++) {
+        const [a, b, c] = combinations[i];
+        if (cells[a].textContent == p && cells[c].textContent == p && cells[c].textContent == p) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (input.value) {
+        socket.emit('chat', { msg: input.value, room: roomName });
+        input.value = '';
+      }
+    });
+
+    let player = 'X';
+    let x_is_next = true;
+
+    socket.on('updateGameState', (newGameState) => {
+      // Update the UI based on the game's new state
+      for (let i = 0; i < newGameState.cells.length; i++) {
+        cells[i].textContent = newGameState.cells[i];
+        player = newGameState.currentPlayer;
+      }
+    });
+
+    for (let i = 0; i < cells.length; i++) {
+      cells[i].addEventListener('click', () => {
+        console.log('Cell clicked:', i); // Log the clicked cell index
+        if (cells[i].textContent !== "") {
+          console.log('Cell is not empty, returning.'); // Log if cell is not empty
+          return;
+        }
+        
+        cells[i].textContent = player;
+
+        if (checkGame(player)) {
+          console.log(`\x1b[92m${player} wins!\x1b[0m`);
+          // Ref.textContent = `${player} wins`
+          // alert(`${player} wins`);
+          socket.emit('endGame', { room: roomName, player: player});
+        }
+        
+        socket.emit('play', { index: i, symbol: player, room: roomName });
+        x_is_next = !x_is_next;
+        player = x_is_next ? 'X' : 'O';
+      });
+    }
+
+    socket.on('showWinner', (player) => {
+      alert(`${player} wins`);
+    })
+
+    socket.on('chat', (msg) => {
+      const item = document.createElement('li');
+      item.textContent = msg;
+      messages.appendChild(item);
+      window.scrollTo(0, document.body.scrollHeight);
+    });
+
+    socket.on('occupied', (roomName) => {
+      window.location.href = 'http://localhost:3000/occupied';
+    })
+
+  </script>
+{% endblock %}

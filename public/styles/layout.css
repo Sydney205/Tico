@@ -1,0 +1,70 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html {
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+body {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden !important;
+  scroll-behavior: smooth;
+}
+
+nav {
+  height: max-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.bar-container {
+  width: max-content;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.bar1, .bar2, .bar3 {
+  width: 35px;
+  height: 5px;
+  /* border-radius: 2px; */
+  background: indigo;
+  transition: 0.4s;
+  margin-bottom: 6px;
+}
+
+.bar-container.change .bar1 {
+  transform: rotate(-45deg) 
+  translate(-7px, 3px)
+  ;
+}
+
+.bar-container.change .bar2 {
+  opacity: 0;
+}
+
+.bar-container.change .bar3 {
+  transform: rotate(45deg) 
+  translate(-10px, -3px)
+  ;
+}

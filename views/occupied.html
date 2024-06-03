@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles/style.css" />
+    <link rel="stylesheet" href="/styles/layout.css" />
+    <title>404 Page not found</title>
+  </head>
+  <body class="bg-slate-50 dark:bg-slate-900 dark:text-white scroll-smooth w-full min-h-screen overflow-x-hidden">
+
+    <nav class="shado ">
+      <div class="bar-container change hidden md:flex flex-col" onclick="toggleMenu(this)">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </div>
+    </nav>
+    
+    <article class="min-h-screen w-full flex flex-col justify-center items-center text-center text-slate-950 dark:bg-slate-950 dark:text-white px-4 overflow-x-hidden">
+      <h1>This room is currently OCCUPIED</h1>
+    </article>
+    <script src="../socket.io/socket.io.js"></script>
+    <script>
+      function toggleMenu(element) {
+        element.classList.toggle("change");
+      }
+    </script>
+  </body>
+</html><!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles/style.css" />
+    <link rel="stylesheet" href="/styles/layout.css" />
+    <title>Triple-T - Play with Friends</title>
+  </head>
+  <body class="bg-slate-50 dark:bg-slate-900 dark:text-white scroll-smooth w-full min-h-screen overflow-x-hidden">
+
+    <nav class="shado ">
+      <div class="bar-container change hidden md:flex flex-col" onclick="toggleMenu(this)">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </div>
+    </nav>
+    
+    <article class="min-h-screen w-full flex flex-col justify-center items-center text-center text-slate-950 dark:bg-slate-950 dark:text-white px-4 overflow-x-hidden">
+    
+    </article>
+    <script src="../socket.io/socket.io.js"></script>
+    <script>
+      function toggleMenu(element) {
+        element.classList.toggle("change");
+      }
+    </script>
+  </body>
+</html>
