@@ -1,59 +1,84 @@
 {% extends "layout.html" %} {% block body %}
-  <div id="boardContainer" class="w-3/4 grid grid-cols-3 gap-2 dark:text-white text-dark">
+  <div class="mb-4">
+    <div class="flex gap-20">
+      <p class="text-2xl text-black dark:text-white">X</p>
+      <p class="text-2xl text-black dark:text-white">Y</p>
+    </div>
+    <div class="flex gap-8">
+      <div id="xScores" class="text-2xl"></div>
+      <div>---</div>
+      <div id="yScores" class="text-2xl"></div>
+    </div>
+  </div>
+  
+  <div id="boardContainer" class="w-3/4 grid grid-cols-3 gap-2 dark:text-white text-dark md:w-max">
     <button 
-      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-green-600 bg-transparent text-xl "
       id="cell_0"
     ></button>
     <button 
-      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-green-600 bg-transparent text-xl "
       id="cell_1"
     ></button>
     <button 
-      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-green-600 bg-transparent text-xl "
       id="cell_2"
     ></button>
     
     <button 
-      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-green-600 bg-transparent text-xl "
       id="cell_3"
     ></button>
     <button 
-      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-green-600 bg-transparent text-xl "
       id="cell_4"
     ></button>
     <button 
-      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-green-600 bg-transparent text-xl "
       id="cell_5"
     ></button>
     
     <button 
-      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-green-600 bg-transparent text-xl "
       id="cell_6"
     ></button>
     <button 
-      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-green-600 bg-transparent text-xl "
       id="cell_7"
     ></button>
     <button 
-      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-indigo-600 bg-transparent text-xl "
+      class="cells w-20 h-20 flex justify-center items-center p-2 rounded border-2 border-green-600 bg-transparent text-xl "
       id="cell_8"
     ></button>
+    
   </div>
 
-  <p id="Ref"></p>
+  <p id="spec" class="text-yellow-800 text-md mt-4"></p>
+  <button id="restartButton" class="px-6 p-2 border-2 border-green-600 text-md bg-green-600 text-white hover:bg-transparent transition-all rounded-md mt-6" onclick="restartGame()">Play again</button>
 
-  <ul id="messages" class="bg-red-700"></ul>
-  <form id="form" class="absolute bottom-5 w-4/5 bg-indigo-600 h-max p-4 rounded-md flex justify-between items-center">
-    <input type="text" name="input" id="input" class="bg-transparent focus:outline-none outline-none" placeholder="Chat..."/>
+  <div class="W-90 flex justify-center items-center">
+    <ul id="messages" class="hidden flex-col w-4/5 absolute bg-green-50 dark:bg-zinc-900 border-green-600 rounded-md overflow-y-scroll transition-all text-black dark:text-white text-lg p-4 md:w-2/4 mb-8 md:mb-0"></ul>
+    <form id="form" class="absolute bottom-4 w-4/5 bg-green-600 h-max p-4 rounded-md flex justify-between items-center md:w-2/4">
+      <input type="text" name="input" id="input" class="w-3/4 bg-transparent focus:outline-none outline-none" placeholder="Chat..."/>
 
-    <button type="submit">
-      <svg viewBox="0 0 24 24" width="30" height="30">
-        <path fill="none" d="M0 0h24v24H0z"></path>
-        <path fill="#fff" d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"></path>
-      </svg>
-    </button>
-  </form>
-  
+      <div class="w-max flex gap-6">
+        <button type="submit">
+          <svg viewBox="0 0 24 24" width="30" height="30">
+            <path fill="none" d="M0 0h24v24H0z"></path>
+            <path fill="#fff" d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"></path>
+          </svg>
+        </button>
+
+        <button onclick="showChat()">
+          <svg viewBox="0 0 24 24" width="30" height="30">
+            <path fill="none" d="M0 0h24v24H0z"></path>
+            <path fill="#fff" d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"></path>
+          </svg>
+        </button>
+      </div>
+    </form>
+  </div>
+
   <script src="../socket.io/socket.io.js"></script>
   <script>
     const socket = io('http://localhost:3000');
@@ -61,11 +86,46 @@
 
     socket.emit('joinroom', `${roomName}`);
 
+    // Elements...
     const form = document.getElementById('form');
     const input = document.getElementById('input');
     const messages = document.getElementById('messages');
     const cells = document.getElementsByClassName('cells');
-    const ref = document.getElementById('Ref');
+    const spec = document.getElementById('spec');
+    const restartButton = document.getElementById('restartButton');
+    
+    const xScore = document.getElementById('xScores');
+    const yScore = document.getElementById('yScores');
+
+    let xCounter = 0;
+    let yCounter = 0;
+
+    xScore.textContent = xCounter;
+    yScore.textContent = yCounter;
+    
+    restartButton.style.display = "none";
+      
+    let chatOpened = false;
+    let player = 'X';
+    let x_is_next = true;
+
+
+    function showChat() {
+      chatOpened = !chatOpened;
+      if (chatOpened) {
+        messages.style.display = "flex";
+        messages.style.height = "13rem";
+        messages.style.marginTop = "-4rem";
+        messages.style.borderWidth = "2px";
+        messages.style.padding = "1rem";
+      } else {
+        messages.style.display = "none";
+        messages.style.height = "0px";
+        messages.style.marginTop = "none";
+        messages.style.borderWidth = "0px";
+        messages.style.padding = "0rem";
+      }
+    }
 
     function checkGame(p) {
       const combinations = [
@@ -83,14 +143,20 @@
 
       for (let i=0;i<combinations.length;i++) {
         const [a, b, c] = combinations[i];
-        if (cells[a].textContent == p && cells[c].textContent == p && cells[c].textContent == p) {
+        if (cells[a].textContent == p && cells[b].textContent == p && cells[c].textContent == p) {
           return true;
         }
       }
       return false;
     }
 
+    function restartGame() {
+      socket.emit('restartGame', roomName);
+      restartButton.style.display = "none";
+      spec.textContent = "";
+    }
 
+    // Chats...
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       if (input.value) {
@@ -99,10 +165,10 @@
       }
     });
 
-    let player = 'X';
-    let x_is_next = true;
-
     socket.on('updateGameState', (newGameState) => {
+      restartButton.style.display = "none";
+      spec.textContent = "";
+      
       // Update the UI based on the game's new state
       for (let i = 0; i < newGameState.cells.length; i++) {
         cells[i].textContent = newGameState.cells[i];
@@ -110,6 +176,7 @@
       }
     });
 
+    
     for (let i = 0; i < cells.length; i++) {
       cells[i].addEventListener('click', () => {
         console.log('Cell clicked:', i); // Log the clicked cell index
@@ -120,28 +187,41 @@
         
         cells[i].textContent = player;
 
+        socket.emit('play', { index: i, symbol: player, room: roomName });
+        
         if (checkGame(player)) {
           console.log(`\x1b[92m${player} wins!\x1b[0m`);
-          // Ref.textContent = `${player} wins`
-          // alert(`${player} wins`);
           socket.emit('endGame', { room: roomName, player: player});
+
+          if (player == 'X') {
+            xCounter++;
+            xScore.textContent = xCounter;
+          } else {
+           yCounter++;
+            yScore.textContent = yCounter;
+          }
         }
-        
-        socket.emit('play', { index: i, symbol: player, room: roomName });
         x_is_next = !x_is_next;
         player = x_is_next ? 'X' : 'O';
       });
     }
 
     socket.on('showWinner', (player) => {
-      alert(`${player} wins`);
+      spec.textContent = `${player} wins`;
+      restartButton.style.display = "flex";
     })
 
     socket.on('chat', (msg) => {
       const item = document.createElement('li');
       item.textContent = msg;
       messages.appendChild(item);
-      window.scrollTo(0, document.body.scrollHeight);
+      chatOpened = true;
+      messages.style.display = "flex";
+      messages.style.height = "13rem";
+      messages.style.marginTop = "-4rem";
+      messages.style.borderWidth = "2px";
+      messages.style.padding = "1rem";
+      messages.scrollTo(0, document.body.scrollHeight);
     });
 
     socket.on('occupied', (roomName) => {

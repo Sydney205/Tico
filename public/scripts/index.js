@@ -1,14 +1,15 @@
-const navContent = document.getElementById('navContent');
-let opened = false;
+const navContent = document.getElementById("navContent");
+const roomInput = document.getElementById("roomInput");
+let navOpened = false;
 
 function toggleMenu(element, nav) {
   element.classList.toggle("change");
-  if (opened) {
-    nav.style.right = "-100";
+  if (navOpened) {
+    nav.style.right = "-100%";
   } else {
-    nav.style.right = "0";
+    nav.style.right = "0px";
   }
-  opened = !opened;
+  navOpened = !navOpened;
 }
 
 function navigate(route) {

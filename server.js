@@ -1,3 +1,4 @@
+/* Welcome to the server engine room */
 import express from 'express'
 import { createServer } from 'http' 
 import { fileURLToPath } from 'url' 
@@ -5,6 +6,7 @@ import { dirname, join } from 'path'
 import { Server } from 'socket.io'
 import nunjucks from 'nunjucks'
 
+const PORT = process.env.PORT || 3000
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const app = express()
@@ -20,18 +22,31 @@ nunjucks.configure('views', {
 app.use(express.json())
 app.use(express.static(join(__dirname, 'public')))
 
+// Routes...
 app.get('/', (req, res) => {
   res.render('index.html')
 })
 
+app.get('/create-join-room', (req, res) => {
+  res.render('create-room.html')
+})
+
 app.get('/occupied', (req, res) => {
-  res.sendFile(join(__dirname, 'views', 'occupied.html'))
+  res.render('occupied.html')
+})
+
+app.get('/nothing', (req, res) => {
+  res.render('nothing.html')
+})
+
+app.get('/coming_soon', (req, res) => {
+  res.render('coming-soon.html')
 })
 
 app.get('/:roomName', (req, res) => {
   const { roomName } = req.params.roomName
 
-  res.sendFile(join(__dirname, 'views', 'game.html'))
+  res.render('game.html')
 })
 
 // Game states for several rooms
@@ -44,11 +59,11 @@ const initializeGameState = () => {
   }
 }
 
+// Socket.io ...
 io.on('connection', (socket) => {
   console.log('A user arrived on site!')
 
   socket.on('joinroom', (room) => {
-
     const currentRoom = io.sockets.adapter.rooms.get(room)
     const clients = currentRoom ? currentRoom.size : 0
 
@@ -57,7 +72,7 @@ io.on('connection', (socket) => {
       if (!gameStates[room]) {
         gameStates[room] = initializeGameState()
       }
-      console.log(`${socket.id} just joined room ${room}`)
+      console.log(`${socket.id} just joined room \x1b[92m${room}\x1b[0m`)
     } else {
       socket.emit('occupied', room)
       console.log(`User ${socket.id} attempted to join ${room} but it was full`)
@@ -93,8 +108,19 @@ io.on('connection', (socket) => {
     }
   })
 
+  // Restart the game
+  socket.on('restartGame', (room) => {
+    const gameState = gameStates[room]
+    for (let i=0;i<gameState.cells.length;i++) {
+      gameState.cells[i] = null
+      gameState.currentPlayer = 'X'
+    }
+    
+    io.to(room).emit('updateGameState', gameState)
+  })
+
   socket.on('endGame', ({ room, player }) => {
-    io.to.(room)emit('showWinner', player)
+    io.to(room).emit('showWinner', player)
   })
 
   socket.on('disconnect', () => {
@@ -102,7 +128,7 @@ io.on('connection', (socket) => {
   })
 })
 
-server.listen(3000, () => {
-  console.log('Server running at http://localhost:3000')
+server.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`)
 })
 
