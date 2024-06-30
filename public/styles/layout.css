@@ -78,3 +78,7 @@ button, input {
 .W-90 {
   width: 90%;
 }
+
+.h-45r {
+  height: 45rem !important;
+} 

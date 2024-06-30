@@ -1,4 +1,3 @@
-/* Welcome to the server engine room */
 import express from 'express'
 import { createServer } from 'http' 
 import { fileURLToPath } from 'url' 
@@ -83,7 +82,7 @@ io.on('connection', (socket) => {
 
     // Delete room, if there are no more connected clients
     socket.on('disconnect', () => {
-      if (clients == 0) {
+      if (clients === 0) {
         io.of('/').adapter.rooms.delete(room)
         console.log(`Room \x1b[91m${room}\x1b[0m was deleted, because it's now empty`)
       } else {
@@ -92,7 +91,6 @@ io.on('connection', (socket) => {
     })
   })
 
-  // Chat function
   socket.on('chat', ({ msg, room }) => {
     io.to(room).emit('chat', msg)
   })
@@ -128,6 +126,7 @@ io.on('connection', (socket) => {
   })
 })
 
+// Listener
 server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`)
 })
