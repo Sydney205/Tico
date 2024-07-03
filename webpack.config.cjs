@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
-  entry: './src/index.js', 
+  entry: './server.js', 
   target: 'node',
   output: {
     filename: 'bundle.js',
@@ -25,7 +25,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/index.html', 
+      template: './views/index.html', 
       filename: 'index.html'
     })
   ],
