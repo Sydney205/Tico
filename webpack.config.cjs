@@ -1,11 +1,14 @@
 const path = require('path');
+const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
-  entry: './server.js',  // Adjust the entry point as per your project structure
+  entry: './server.js',  
+  target: 'node',
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
   },
+  externals: [nodeExternals()],  
   module: {
     rules: [
       {
@@ -22,6 +25,17 @@ module.exports = {
       }
     ]
   },
-  mode: 'development'
+  mode: 'production',
+  resolve: {
+    fallback: {
+      "async_hooks": false  
+    }
+  }
+  ignoreWarnings: [
+    {
+      module: /express/,  // Adjust this to match the specific module
+      message: /Critical dependency: the request of a dependency is an expression/
+    }
+  ]
 };
 

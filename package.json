@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node dist/bundle.js",
     "dev": "nodemon server",
-    "build": "webpack --mode=production",
+    "build": "webpack --config webpack.config.js",
     "tailwind": "postcss public/styles/tailwind.css -o public/styles/style.css"
   },
   "type": "module",
