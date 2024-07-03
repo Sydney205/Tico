@@ -1,23 +1,21 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
-  entry: './server.js', 
+  entry: './src/index.js', 
   target: 'node',
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/' 
   },
-  externals: [nodeExternals()],  
+  externals: [nodeExternals()], 
   module: {
     rules: [
       {
         test: /\.html$/,
-        use: [
-          {
-            loader: 'html-loader'
-          }
-        ]
+        use: ['html-loader']
       },
       {
         test: /\.css$/,
@@ -25,15 +23,21 @@ module.exports = {
       }
     ]
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './src/index.html', 
+      filename: 'index.html'
+    })
+  ],
   mode: 'production',
   resolve: {
     fallback: {
-      "async_hooks": false  
+      "async_hooks": false 
     }
   },
   ignoreWarnings: [
     {
-      module: /express/,  
+      module: /express/, 
       message: /Critical dependency: the request of a dependency is an expression/
     }
   ]
