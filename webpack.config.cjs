@@ -1,23 +1,27 @@
-const path = require("path");
+const path = require('path');
 
 module.exports = {
-  entry: './server.js',
-  target: 'node',
+  entry: './server.js',  // Adjust the entry point as per your project structure
   output: {
-    path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js',
-  },
-  resolve: {
-    extensions: ['.css', '.html', '.js'],
+    path: path.resolve(__dirname, 'dist')
   },
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
-        exclude: /node_modules/,
+        test: /\.html$/,
+        use: [
+          {
+            loader: 'html-loader'
+          }
+        ]
       },
-    ],
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
+      }
+    ]
   },
+  mode: 'development'
 };
 
