@@ -126,10 +126,7 @@ io.on('connection', (socket) => {
   })
 })
 
-// Listener for development
-// server.listen(PORT, () => {
-//   console.log(`Server running at http://localhost:${PORT}`)
-// })
+server.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`)
+})
 
-// export the app for vercel serverless functions 
-export default app
