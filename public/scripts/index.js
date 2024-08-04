@@ -1,5 +1,4 @@
 const navContent = document.getElementById("navContent");
-const roomInput = document.getElementById("roomInput");
 let navOpened = false;
 
 function toggleMenu(element, nav) {

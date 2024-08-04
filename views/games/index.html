@@ -1,0 +1,12 @@
+{% extends "../layouts/layout.html" %} {% block body %}
+  <section class="flex flex-col justify-start items-start">
+    <h1 class="text-3xl font-bold">Games</h1>
+    <ul class="flex flex-col justify-center items-center gap-4 w-full">  
+      {% for game in gameList %}
+        <li class="shadow rounded-md border-2 border-green-600 text-xl w-3/4 p-4">
+          {{ game }}
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+{% endblock %}

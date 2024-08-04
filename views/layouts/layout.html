@@ -5,13 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/styles/layout.css" />
     <link rel="stylesheet" href="/styles/style.css" />
-    <title>Tico - Play with Friends</title>
+    {% if title %}
+      <title>Tico - {{ title }}</title>
+    {% else %}
+      <title>Tico - {{ title }}</title>
+    {% endif %}
   </head>
   <body class="bg-green-50 dark:bg-green-900 dark:text-white scroll-smooth w-full min-h-screen overflow-x-hidden">
 
     <nav class="fixed top-0 z-50 left-0 w-full h-20 flex justify-between items-center gap-4 bg-green-50 text-zinc-900 dark:bg-zinc-900 dark:text-white shadow-xl px-10 py-3">
       <a href="/">
-        <h2 class="font-bold text-3xl text-green-600 md:ml-10">Tico</h2>
+        <h2 class="font-bold text-3xl text-green-600 md:ml-10">Ti<span class="dark:text-green-50 text-black">co</span></h2>
       </a>
       <div class="bar-container flex flex-col justify-end items-end ml-auto md:hidden" onclick="toggleMenu(this, navContent)">
         <div class="bar1 bg-green-600"></div>
@@ -22,8 +26,8 @@
       <!-- Navigation -->
       <ul class="hidden w-max ml-auto md:flex justify-center gap-4">
         <a class="text-lg hover:text-green-600 transition-all" href="/create-join-room">Create/join room</a>
-        <a class="text-lg hover:text-green-600 transition-all" href="/coming_soon">Games</a>       
-        <a class="text-lg hover:text-green-600 transition-all" href="/nothing">Last week</a>        <a class="text-lg hover:text-green-600 transition-all" href="/https://github.com/Sydney205/TTT-multiplayer/contribute">Contribute</a>
+        <a class="text-lg hover:text-green-600 transition-all" href="/games">Games</a>       
+        <a class="text-lg hover:text-green-600 transition-all" href="/nothing">Last week</a>        <a class="text-lg hover:text-green-600 transition-all" href="https://github.com/Sydney205/Tico">Contribute</a>
       </ul>
         
       <!-- Side Navigation bar -->
@@ -34,7 +38,7 @@
       <a class="text-zinc-900 dark:text-white decoration-none text-xl hover:underline hover:text-green-600" href="https://github.com/Sydney205/Tico#contribution">
         Contribute
       </a>
-      <a class="text-zinc-900 dark:text-white decoration-none text-xl hover:underline hover:text-green-600" href="/coming_soon">
+      <a class="text-zinc-900 dark:text-white decoration-none text-xl hover:underline hover:text-green-600" href="/games">
         Games
       </a>
       <a class="text-zinc-900 dark:text-white decoration-none text-xl hover:underline hover:text-green-600" href="/nothing">

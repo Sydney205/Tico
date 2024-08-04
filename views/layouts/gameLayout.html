@@ -1,0 +1,31 @@
+{% extends "./layout.html" %} {% block gameBody %}
+
+  <!-- Body Content -->
+    {% block body %}{% endblock %}
+  <!-- End Body Content -->
+
+  <div class="W-90 flex justify-center items-center">
+    <ul id="messages" class="flex-col w-4/5 absolute bg-green-50 dark:bg-zinc-900 border-green-600 rounded-md overflow-y-scroll transition-all text-black dark:text-white text-lg md:w-2/4 mb-8 md:mb-0"></ul>
+    <form id="form" class="w-4/5 bg-green-600 h-max p-4 rounded-md flex justify-between items-center md:w-2/4">
+      <input type="text" name="input" id="input" class="w-3/4 bg-transparent focus:outline-none outline-none" placeholder="Chat..."/>
+
+      <div class="w-max flex gap-6">
+        <button type="submit">
+          <svg viewBox="0 0 24 24" width="30" height="30">
+            <path fill="none" d="M0 0h24v24H0z"></path>
+            <path fill="#fff" d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"></path>
+          </svg>
+        </button>
+
+        <button onclick="showChat()">
+          <svg fill="#ffffff" width="30" height="30" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 337.013 337.014" xml:space="preserve" stroke="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <path d="M28.715,215.714C12.883,215.714,0,202.833,0,187.005V57.91c0-15.834,12.883-28.712,28.715-28.712h220.147 c15.829,0,28.715,12.877,28.715,28.712v18.678H88.15c-22.614,0-41.006,18.399-41.006,41.016v98.11H28.715z"></path> <path d="M337.013,246.692c0,15.834-12.874,28.715-28.703,28.715h-14.705c-3.394,0-6.149,2.75-6.149,6.148v26.26l-25.58-30.229 c-1.171-1.387-2.889-2.18-4.689-2.18H88.15c-15.826,0-28.708-12.881-28.708-28.715v-18.682v-12.297v-98.11 c0-15.829,12.883-28.718,28.708-28.718h189.427h12.298h18.435c15.829,0,28.703,12.89,28.703,28.718V246.692z"></path> </g> </g> </g></svg>
+        </button>
+      </div>
+    </form>
+
+  </div>
+
+  <script src="../socket.io/socket.io.js"></script>
+  <script src="/scripts/chat.js"></script>
+
+{% endblock %}

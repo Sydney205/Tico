@@ -1,7 +1,7 @@
 # Tico
 _Play tictactoe with friends_
 
-# Screenshots
+# 📷 Screenshots
 
 <img src="./public/shots/home_light.png" />
 <img src="./public/shots/home.png" />
@@ -30,5 +30,5 @@ npm install
 ```sh
 npm run dev
 ```
-### Enjoy your Tico
+### Enjoy Tico
 [Visit the site](https://silent-lofty-geese.glitch.me)

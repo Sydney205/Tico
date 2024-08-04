@@ -82,3 +82,39 @@ button, input {
 .h-45r {
   height: 45rem !important;
 } 
+
+#cell_0 {
+  border-top-width: 0px !important;
+  border-left-width: 0px !important;
+}
+
+#cell_1 {
+  border-top-width: 0px !important;
+}
+
+#cell_2 {
+  border-top-width: 0px !important;
+  border-right-width: 0px !important;
+}
+
+#cell_3 {
+  border-left-width: 0px !important;
+}
+
+#cell_5 {
+  border-right-width: 0px !important;
+}
+
+#cell_6 {
+  border-bottom-width: 0px !important;
+  border-left-width: 0px !important;
+}
+
+#cell_7 {
+  border-bottom-width: 0px !important;
+}
+
+#cell_8 {
+  border-bottom-width: 0px !important;
+  border-right-width: 0px !important;
+}
