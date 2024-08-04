@@ -48,6 +48,11 @@ socket.on('ttt_updateGameState', (newGameState) => {
   comment.style.color = "rgb(133, 77, 14)";
   for (let i = 0; i < newGameState.cells.length; i++) {
     cells[i].textContent = newGameState.cells[i];
+
+    if (newGameState.cells[i] != null) {
+      cells[i].disabled = true;
+      console.log(cells[i]);
+    }
   }
 
   player = newGameState.currentPlayer;
