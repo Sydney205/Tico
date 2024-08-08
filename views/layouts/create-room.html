@@ -1,0 +1,26 @@
+{% extends "./layout.html" %} {% block body %}
+  <section class="md:w-2/4 h-max flex flex-col justify-start items-start">
+    <h2 class="font-bold text-4xl text-green-600">Create or join?</h2>
+    <p class="text-xl text-gray-700 dark:text-gray-400 mb-10">Enter the name of the room you want to create/join</p>
+    <form id="form" class="w-3/4 flex">
+      <input 
+        type="text" 
+        id="roomInput" 
+        name="room" 
+        placeholder="Enter room name" 
+        class="bg-green-50 dark:bg-transparent border-2 border-green-600 rounded w-full text-xl p-4"
+      />
+    </form>
+    <button 
+      id="roomBtn"
+      class="bg-green-600 rounded border-2 border-green-600 bg-green-600 text-white hover:bg-transparent hover:text-black dark:hover:text-white text-xl px-6 py-2 mt-4"
+    >
+      Enter
+    </button>
+  </section>
+
+  <!-- Body Content -->
+    {% block container %}{% endblock %}
+  <!-- End Body Content -->
+  
+{% endblock %}

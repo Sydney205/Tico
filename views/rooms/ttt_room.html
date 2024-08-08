@@ -1,0 +1,20 @@
+{% extends "../layouts/create-room.html" %}
+
+{% block container %}  
+  <script>
+    const form = document.getElementById("form");
+    const roomInput = document.getElementById("roomInput");
+    const roomBtn = document.getElementById("roomBtn");
+
+    roomBtn.addEventListener('click', () => {
+      navigate(`/tictactoe/${roomInput.value}`);
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (roomInput.value) {
+        navigate(`/tictactoe/${roomInput.value}`);
+      }
+    });
+  </script>
+{% endblock %}
