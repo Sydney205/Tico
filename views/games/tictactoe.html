@@ -1,6 +1,6 @@
 {% extends "../layouts/gameLayout.html" %}
 
-{% block body %}
+{% block gameLayout %}
   <div class="mb-4 bg-green-600 text-white p-4 px-10 rounded-md shadow-lg">
     <div class="flex justify-center gap-10">
       <p class="text-2xl font-bold">X</p>
@@ -14,7 +14,7 @@
     </div>
   </div>
   
-  <div id="boardContainer" class="mx-auto grid grid-cols-3 gap-2 dark:text-white text-dark md:w-max">
+  <div id="boardContainer" class="mx-auto grid grid-cols-3 gap-2 dark:text-white text-dark md:w-max scale-90">
     {% for i in range(9) %}
     <button 
       class="cells w-24 h-24 flex justify-center items-center p-2 border-2 border-green-600 bg-transparent text-2xl transition-transform transform hover:border-black dark:hover:border-white disabled:hover:border-green-600"

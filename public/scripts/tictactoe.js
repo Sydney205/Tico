@@ -4,7 +4,6 @@ const roomName = window.location.pathname.substring(1);
 socket.emit('ttt_join', roomName);
 
 // Elements
-const messages = document.getElementById('messages');
 const cells = document.getElementsByClassName('cells');
 const comment = document.getElementById('comment');
 const restartButton = document.getElementById('restartButton');
@@ -49,9 +48,8 @@ socket.on('ttt_updateGameState', (newGameState) => {
   for (let i = 0; i < newGameState.cells.length; i++) {
     cells[i].textContent = newGameState.cells[i];
 
-    if (newGameState.cells[i] != null) {
+    if (newGameState.cells[i] !== null && newGameState.cells[i] !== "") {
       cells[i].disabled = true;
-      console.log(cells[i]);
     }
   }
 
@@ -94,8 +92,12 @@ restartButton.addEventListener('click', () => {
   socket.emit('ttt_restartGame', roomName);
 });
 
+socket.on('ttt_restart', () => {
+  restartButton.style.display = "none";
+});
+
 socket.on('ttt_occupied', () => {
-  navigate('occupied')
+  navigate('/occupied')
 });
 
 // Cell click event

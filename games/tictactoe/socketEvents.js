@@ -29,11 +29,11 @@ export function setupTicTacToeSockets(io, socket) {
 
       const winner = checkForWinner(gameState.cells, symbol);
       if (winner) {
+        io.to(room).emit('ttt_updateGameState', gameState);
         io.to(room).emit('ttt_showWinner', symbol);
-        gameStates[room] = initializeGameState(); // Reset the game state
       } else if (gameState.cells.every(cell => cell !== null)) {
+        io.to(room).emit('ttt_updateGameState', gameState);
         io.to(room).emit('ttt_draw');
-        gameStates[room] = initializeGameState(); // Reset the game state
       } else {
         io.to(room).emit('ttt_updateGameState', gameState);
       }
@@ -43,6 +43,7 @@ export function setupTicTacToeSockets(io, socket) {
   socket.on('ttt_restartGame', (room) => {
     gameStates[room] = initializeGameState();
     io.to(room).emit('ttt_updateGameState', gameStates[room]);
+    io.to(room).emit('ttt_restart');
   });
 
   socket.on('disconnect', () => {

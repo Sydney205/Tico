@@ -43,7 +43,6 @@ button, input {
 .bar1, .bar2, .bar3 {
   height: 4px;
   border-radius: 2px;
-  background: indigo;
   transition: 0.4s;
   margin-bottom: 6px;
 }

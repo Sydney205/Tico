@@ -1,12 +1,25 @@
 {% extends "../layouts/layout.html" %} {% block body %}
-  <section class="flex flex-col justify-start items-start">
-    <h1 class="text-3xl font-bold">Games</h1>
-    <ul class="flex flex-col justify-center items-center gap-4 w-full">  
+  <section class="h-max flex flex-col justify-center items-center">
+    <h1 class="text-3xl font-bold mb-4">Games</h1>
+    <div class="flex flex-col justify-center items-center gap-4 w-screen">  
       {% for game in gameList %}
-        <li class="shadow rounded-md border-2 border-green-600 text-xl w-3/4 p-4">
-          {{ game }}
-        </li>
+        <div class="flex flex-col shadow rounded-md border-2 border-green-600 text-xl w-3/4 md:w-2/4 p-4">
+            <h3 class="font-bold mb-4">
+              {{ game.name }}
+            </h3>
+
+            <p class="text-md text-gray-400">
+              {{ game.desc }}
+            </p>
+
+          <button 
+            class="w-max mt-4 bg-transparent text-black dark:bg-green-600 dark:text-white border border-green-600 rounded py-[3px] px-6 hover:bg-transparent" 
+            onclick="navigate(`/${'{{game.route}}'}/create-join-room`)"
+          >
+            Play
+          </button>
+        </div>
       {% endfor %}
-    </ul>
+    </div>
   </section>
 {% endblock %}

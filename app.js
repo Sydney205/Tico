@@ -3,8 +3,12 @@ import { fileURLToPath } from 'url'
 import { dirname, join } from 'path'
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import nunjucks from 'nunjucks';
-import routes from './routes.js';
+import { nunjucksConfig } from './config/nunjucks.js'
+
+// Routes...
+import tttRoutes from './routes/tictactoe.js';
+import roots from './routes/index.js';
+
 import { setupSocket } from './config/socket.js';
 
 const PORT = process.env.PORT || 3000;
@@ -14,19 +18,18 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
-// Configure Nunjucks
-nunjucks.configure('views', {
-  autoscape: true,
-  express: app
-});
+nunjucksConfig(app)
 
 app.use(express.json());
 app.use(express.static(join(__dirname, 'public')));
-app.use('/', routes);
+
+// routes...
+app.use('/', roots);
+app.use('/tictactoe', tttRoutes);
 
 setupSocket(io);
 
 server.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`\n Tico is running at http://localhost:${PORT}`);
 });
 
