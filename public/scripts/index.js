@@ -12,5 +12,5 @@ function toggleMenu(element, nav) {
 }
 
 function navigate(route) {
-  window.location.href = `http://localhost:3000/${route}`;
+  window.location.href = `http://localhost:3000${route}`; // usage: navigate("/route")
 }
