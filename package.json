@@ -4,7 +4,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node app",
-    "dev": "nodemon app",
+    "dev": "nodemon app.js -e html,js,mjs,cjs",
     "tailwind": "postcss public/styles/tailwind/input.css -o public/styles/tailwind/tailwind.css"
   },
   "type": "module",
