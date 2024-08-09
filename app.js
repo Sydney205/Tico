@@ -6,8 +6,9 @@ import { Server } from 'socket.io';
 import { nunjucksConfig } from './config/nunjucks.js'
 
 // Routes...
-import tttRoutes from './routes/tictactoe.js';
 import roots from './routes/index.js';
+import tttRoutes from './routes/tictactoe.js';
+import chessRoutes from './routes/chess.js';
 
 import { setupSocket } from './config/socket.js';
 
@@ -26,6 +27,7 @@ app.use(express.static(join(__dirname, 'public')));
 // routes...
 app.use('/', roots);
 app.use('/tictactoe', tttRoutes);
+app.use('/chess', chessRoutes);
 
 setupSocket(io);
 
