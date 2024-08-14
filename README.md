@@ -15,20 +15,5 @@ _Play tictactoe with friends_
 - ### Chat:
 <img src="./public/shots/chat.png" />
 
-## To run locally:
-**1.** Clone the repository 
-```sh
-git clone <repository_url>
-```
-
-**2.** Install dependencies 
-```sh
-npm install
-```
-
-**3.** Run the development server 
-```sh
-npm run dev
-```
-### Enjoy Tico
-[Visit the site](https://silent-lofty-geese.glitch.me)
+### Visit site
+[Site link](https://silent-lofty-geese.glitch.me)
