@@ -19,6 +19,10 @@
   padding: 5px; 
 }
 
+img {
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
   /* .squares { */
   /*   padding: 1rem; */

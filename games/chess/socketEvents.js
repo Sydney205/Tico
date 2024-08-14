@@ -20,6 +20,11 @@ export function setupChessSockets(io, socket) {
       socket.emit('chess_occupied');
     }
   })
-  
+
+  socket.on('chess_play', ({room, gameState}) => {
+    gameStates[room] = gameState;
+    // console.log(gameStates[room]);
+    io.to(room).emit('chess_updateGameState', gameStates[room]);
+  })
   
 }

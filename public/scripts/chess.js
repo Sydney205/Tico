@@ -1,55 +1,63 @@
 const socket = io('http://localhost:3000');
-const roomName = window.location.pathname.substring(2);
+const roomName = window.location.pathname.substring(7);
 
 socket.emit('chess_join', roomName);
 
 // Elements...
 const squares = document.getElementsByClassName('squares');
 
-let gameObj = [];
-let selectedPiece = '';
+let gameObj = {
+  squares: [],
+  currentPlayer: 'white'
+};
+let selectedPiece = {
+  id: 0,
+  name: ''
+};
 
 socket.on('chess_updateGameState', (newGameState) => {
-  
   for (let i = 0; i < newGameState.squares.length; i++) {
     let square = newGameState.squares[i];
     
-    if (newGameState.squares[i] != '') {
+    if (newGameState.squares[i] !== '') {
       let piece = document.createElement("img");
       piece.setAttribute("src", `../img/chess_pieces/${square}.png`);
       piece.setAttribute("id", `${square}`);
-      
+        
       squares[i].appendChild(piece);      
       console.log(`piece appeared on square ${i}`);
-      
-      // console.log(squares[2].childNodes[0].id) // for getting moves
+    } else {
+      squares[i].childNodes[0] = null;
     }
   }
 
-  gameObj = newGameState.squares;
+  gameObj = newGameState; // Update the game state
+  
+  for (let i = 0; i < squares.length; i++) {
+    if (gameObj.squares[i] !== '') {
+      if (squares[i].childNodes.length > 0) {
+        squares[i].childNodes[0].addEventListener('click', () => {
+          selectedPiece.id = i;
+          selectedPiece.name = squares[i].childNodes[0].id;
+
+          console.log(selectedPiece);
+          
+          if (selectedPiece.name === 'WP' || selectedPiece.name === 'BP') {
+            showPawnMoves(selectedPiece.id, selectedPiece.name, gameObj.squares);
+            enableMove(selectedPiece);
+            console.log(genPawnMove(selectedPiece.id, selectedPiece.name, gameObj.squares))
+          }
+        })
+      }
+    }
+  }
 });
 
 
-for (let i = 0; i < squares.length; i++) {
-  squares[i].addEventListener('click', () => {
-    let position = i;
-    let piece = squares[i].childNodes[0].id;
-    selectedPiece = piece;
-
-    console.log(position, piece);
-    
-    if (piece === 'WP' || piece === 'BP') {
-      showPawnMoves(position, piece, gameObj);
-    }
-  })
+/**
+  Move functions for all the pieces on the board goes here
   
-  // if (squares[i].onFocus) {
-  //   console.log('false');
-  // }
-}
-
-
-
+*/
 function genPawnMove(p, c, g) {
   let moves = [];
 
@@ -120,29 +128,30 @@ function showPawnMoves(p, c, g) {
 
 function clearPawnMoves(p, c, g) {}
 
-function makeMove(selectedPiece, c) {
+
+/* Make pawn move... */
+function enableMove(selectedPiece) {
   let moves = [];
-  if (c === 'WP' || c === 'BP') {
-    moves = showPawnMoves(position, piece, gameObj);
+  if (selectedPiece.name === 'WP' || selectedPiece.name === 'BP') {
+    moves = genPawnMove(selectedPiece.id, selectedPiece.name, gameObj.squares);
+    console.log(moves);
   }
 
-  let piece = document.getElementById(c);
-  // piece.setAttribute("src", `../img/chess_pieces/${squares[position].}.png`);
-  // piece.setAttribute("id", `${squares[position].}`);
+  // let piece = document.getElementById(selectedPiece.name);
 
   for (let i = 0; i < moves.length; i++) {
-    squares[moves[i]].addEventListener('click', () => {
-      gameObj[position] = '';
-      squares[position].childNodes[0].id = '';
-      squares[position].childNodes = [];
-      
-      squares[moves[i]].appendChild(c)
+    squares[moves[i]].style.cursor = "pointer";
+    
+    squares[moves[i]].addEventListener('click', () => {  
+      gameObj.squares[selectedPiece.id] = '';
+      gameObj.squares[moves[i]] = `${selectedPiece.name}`;
 
+
+      socket.emit('chess_play', { roomName, gameObj });
       console.log(gameObj);
     })
   }
 }
-
 
 /*
   p = position
