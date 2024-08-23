@@ -15,6 +15,13 @@ export default {
         blue: {
           DEFAULT: "rgb(0, 162, 255)",
         },
+        green: {
+          DEFAULT: "rgb(22 163 74)",
+          LIGHT: "rgb(240 253 244)",
+        },
+        // light_green: {
+        //   DEFAULT: "rgb(0, 162, 255)",
+        // },
       },
       keyframes: {
         shake: {

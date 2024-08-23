@@ -16,4 +16,4 @@ _Play tictactoe with friends_
 <img src="./public/shots/chat.png" />
 
 ### Visit site
-[Site link](https://silent-lofty-geese.glitch.me)
+[Live demo](https://silent-lofty-geese.glitch.me)

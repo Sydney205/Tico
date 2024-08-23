@@ -1,10 +1,60 @@
 {% extends "./layouts/layout.html" %} {% block body %}
-  <section class="h-max flex flex-col justify-start items-start md:px-12 md:pl-12 md:w-2/4 md:justify-center md:items-center md:text-center md:gap-6">
-    <h1 class="text-4xl font-bold text-green-600 mb-2 md:text-6xl">Duo gaming <span class="dark:text-green-50 text-black">platform</span></h1>
-    <p class="text-xl text-gray-950 dark:text-white">Do you think you're good at Tic Tac Toe... Play with a friend on Tico today to test your capability</p>
+  <section 
+    class="min-h-screen flex flex-col justify-start items-start md:px-12 md:pl-12 md:w-2/4 md:justify-center md:items-center md:text-center md:gap-6"
     
-    <button class="w-full p-2 text-center text-xl text-white bg-green-600 border-2 border-green-600 rounded-md mt-4 md:w-52 hover:bg-transparent hover:text-green-600" onclick="navigate('/games')">
-      Play
+    motion-element="up"
+  >
+    <h1 class="text-4xl font-bold text-Tgreen mb-2 md:text-6xl">
+      Duo gaming 
+      <span class="dark:text-green-50 text-black">platform</span>
+    </h1>
+    <p class="text-xl text-gray-950 dark:text-white">
+      The most grossing 1 v 1 multiplayer board gaming platform.
+    </p>
+    
+    <button 
+      class="w-full p-2 text-center text-xl text-white bg-Tgreen border-2 border-Tgreen rounded-md mt-4 md:w-52 hover:bg-transparent hover:text-Tgreen"
+      onclick="navigate('/games')"
+    >
+      Get started
     </button>
   </section>
+  <section
+    class="w-full h-max flex flex-col justify-center items-center p-4"
+  >
+    <h1 class="font-bold text-4xl mb-4" motion-element="down">We love getting feedback from users</h1>
+    
+    <div class="h-max w-full flex justify-between items-center p-4">
+      <img src="/shots/chat.png" class="w-2/4" motion-element="left" />
+      
+      <form
+        class="w-2/4 flex flex-col justify-start items-center gap-2 p-2"
+        motion-element="right"
+      >
+        <input 
+          type="text" 
+          name="name" 
+          id="name"  
+          placeholder="Your name"
+          class="w-2/4 bg-transparent border-2 border-Tgreen rounded-md p-2"
+        />
+        
+        <input 
+          type="email"
+          name="email"
+          id="email"  
+          placeholder="Email"
+          class="w-2/4 bg-transparent border-2 border-Tgreen rounded-md p-2"
+        />
+
+        <textarea 
+          min=10 
+          max=100
+          class="w-2/4 bg-transparent border-2 border-Tgreen rounded-md p-2"
+          placeholder="Feedback"
+        ></textarea>
+      </form>
+    </div>
+  </section>
+
 {% endblock %}

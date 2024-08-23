@@ -3,17 +3,17 @@ export const gameStates = {};
 export const initializeGameState = () => {
   return {
     squares: [
-      'WR', 'WKn', 'WB', 'WK', 'WQ', 'WB', 'WKn', 'WR', 
-      'WP', 'WP', 'WP','WP', 'WP', 'WP', 'WP', 'WP',
+      'BR', 'BKn', 'BSh','BK', 'BQ', 'BSh', 'BKn', 'BR',
+      'BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP',
       
             '', '', '', '', '', '', '', '',
             '', '', '', '', '', '', '', '',
             '', '', '', '', '', '', '', '',
             '', '', '', '', '', '', '', '', 
       
-      'BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP',
-      'BR', 'BKn', 'BB','BK', 'BQ', 'BB', 'BKn', 'BR',
+      'WP', 'WP', 'WP','WP', 'WP', 'WP', 'WP', 'WP',
+      'WR', 'WKn', 'WSh', 'WK', 'WQ', 'WSh', 'WKn', 'WR'
     ],
-    currentPlayer: 'white'
+    currentPlayer: 'W'
   }
 }

@@ -1,0 +1,60 @@
+/** 
+  Motion animation Elements
+*/
+
+[motion-header] {
+  position: absolute;
+}
+
+[motion-header].fixed {
+  position: fixed !important;
+  animation: slidedown 250ms ease-in 1 !important;
+}
+
+[motion-element] {
+  opacity: 0;
+}
+
+[motion-element="up"] {
+  opacity: 0;
+  transform: translateY(100px); 
+}
+
+[motion-element="down"] {
+  opacity: 0;
+  transform: translateY(-100px); 
+}
+
+[motion-element="left"] { 
+  transform: translateX(-110vw); 
+}
+
+[motion-element="right"] { 
+  transform: translateX(110vw); 
+}
+
+[motion-element].visible {
+  transform: translate(0);
+  transition: 600ms;
+  animation: visible 600ms ease-in-out;
+  opacity: 1;
+}
+
+/* Animations */
+@keyframes slidedown {
+  from {
+    transform: translateY(-100px);
+  } to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes visible {
+  0% {
+    opacity: 0;
+  } 50% {
+    opacity: 0.5;
+  } 100% {
+    opacity: 1;
+  }
+}

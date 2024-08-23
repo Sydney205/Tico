@@ -1,4 +1,4 @@
-const socket = io('http://localhost:3000');
+const socket = io('http://localhost:2050');
 const roomName = window.location.pathname.substring(1);
 
 socket.emit('ttt_join', roomName);

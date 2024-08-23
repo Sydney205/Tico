@@ -1,7 +1,6 @@
 import express from 'express';
 const router = express.Router();
 
-// List of games
 const gameList = [
   {
     name: "Tictactoe",

@@ -1,14 +1,8 @@
-#messages {
-  display: none;
-}
+#messages { display: none; }
 
-.greenSquare {
-  background-color: rgb(22 100 74);
-}
+.greenSquare { background-color: rgb(22 100 74); }
 
-.whiteSquare {
-  background-color: whitesmoke;
-}
+.whiteSquare { background-color: whitesmoke; }
 
 .squares {
   width: 3.5rem;
@@ -19,10 +13,7 @@
   padding: 5px; 
 }
 
-img {
-  cursor: pointer;
-}
-
+/* Mobile viewports */
 @media (max-width: 768px) {
   /* .squares { */
   /*   padding: 1rem; */

@@ -12,7 +12,7 @@ import chessRoutes from './routes/chess.js';
 
 import { setupSocket } from './config/socket.js';
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 2050;
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const app = express();
@@ -24,7 +24,6 @@ nunjucksConfig(app)
 app.use(express.json());
 app.use(express.static(join(__dirname, 'public')));
 
-// routes...
 app.use('/', roots);
 app.use('/tictactoe', tttRoutes);
 app.use('/chess', chessRoutes);

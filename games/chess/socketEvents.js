@@ -1,5 +1,7 @@
 import { gameStates, initializeGameState } from './gameLogic.js'
 
+// let foo = true;
+
 export function setupChessSockets(io, socket) {
   socket.on('chess_join', (room) => {
     const roomObject = io.sockets.adapter.rooms.get(room);
@@ -15,6 +17,9 @@ export function setupChessSockets(io, socket) {
       // gameState.isPlayerTurn = !gameState.isPlayerTurn;
       
       io.to(room).emit('chess_updateGameState', gameStates[room]);
+      io.to(room).emit('chess_rotate');
+      
+      // foo = !foo
       console.log(`${socket.id} joined room ${room}`);
     } else {
       socket.emit('chess_occupied');
@@ -23,7 +28,6 @@ export function setupChessSockets(io, socket) {
 
   socket.on('chess_play', ({room, gameState}) => {
     gameStates[room] = gameState;
-    // console.log(gameStates[room]);
     io.to(room).emit('chess_updateGameState', gameStates[room]);
   })
   
