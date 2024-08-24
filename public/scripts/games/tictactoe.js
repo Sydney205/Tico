@@ -20,7 +20,6 @@ xScore.textContent = xCounter;
 yScore.textContent = yCounter;
 restartButton.style.display = "none";
 
-// Initialize the game board
 function updateBoardState(isDisabled) {
   for (let i = 0; i < cells.length; i++) {
     cells[i].disabled = isDisabled;
@@ -29,9 +28,9 @@ function updateBoardState(isDisabled) {
 
 function checkGame(p) {
   const combinations = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-    [0, 4, 8], [2, 4, 6]  // Diagonals
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6] 
   ];
 
   for (const [a, b, c] of combinations) {
@@ -78,7 +77,7 @@ socket.on('ttt_showWinner', (winner) => {
     yScore.textContent = yCounter;
   }
 
-  updateBoardState(true); // Disable the board after game ends
+  updateBoardState(true);
 });
 
 socket.on('ttt_draw', () => {

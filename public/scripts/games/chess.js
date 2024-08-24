@@ -144,36 +144,24 @@ socket.on('chess_updateGameState', (newGameState) => {
   }
 })
 
-function check(c) {
+function check(c, g) {
   let check_moves = [];
   for (let i = 0; i < squares.length; i++) {
     if (squares[i].childNodes[0]) {
       let dr = squares[i].childNodes[0].id;
       
-      if (!dr.includes(c) && dr[(dr.length - 1)] === "P") {
-        for (move of genPawnMoves(i, dr, gameObj.squares)) {
-          check_moves.push(move)
-        } 
-      } else if ((!dr.includes(c) && dr[(dr.length - 1)] === "h")) {
-        for (move of genBishopMoves(i, gameObj.squares)) {
-          check_moves.push(move)
-        }
-      } else if ((!dr.includes(c) && dr[(dr.length - 1)] === "n")) {
-        for (move of genKnightMoves(i, gameObj.squares)) {
-          check_moves.push(move)
-        }
-      } else if ((!dr.includes(c) && dr[(dr.length - 1)] === "R")) {
-        for (move of genRookMoves(i, gameObj.squares)) {
-          check_moves.push(move)
-        }
-      } else if ((!dr.includes(c) && dr[(dr.length - 1)] === "Q")) {
-        for (move of genQueenMoves(i, gameObj.squares)) {
-          check_moves.push(move)
-        }
-      } else if ((!dr.includes(c) && dr[(dr.length - 1)] === "K")) {
-        for (move of genKingMoves(i, dr, gameObj.squares)) {
-          check_moves.push(move)
-        }
+      if (!dr.includes(c) && dr.endsWith("P")) {
+        check_moves.push(...genPawnMoves(i, dr, g));
+      } else if (!dr.includes(c) && dr.endsWith("h")) {
+        check_moves.push(...genBishopMoves(i, g));
+      } else if (!dr.includes(c) && dr.endsWith("n")) {
+        check_moves.push(...genKnightMoves(i, g));
+      } else if (!dr.includes(c) && dr.endsWith("R")) {
+        check_moves.push(...genRookMoves(i, g));
+      } else if (!dr.includes(c) && dr.endsWith("Q")) {
+        check_moves.push(...genQueenMoves(i, g));
+      } else if (!dr.includes(c) && dr.endsWith("K")) {
+        check_moves.push(...genKingMoves(i, dr, g, false));
       }
     }
   }
@@ -182,7 +170,8 @@ function check(c) {
 }
 
 
-function genKingMoves(p, c, g) {
+
+function genKingMoves(p, c, g, e = true) {
   let moves = [];
   const row = Math.floor(p / 8);
   const col = p % 8;
@@ -204,12 +193,14 @@ function genKingMoves(p, c, g) {
     }
   }
 
-  for (move of check(cr = c[0])) {
-    moves.splice(1, check(cr = c[0])[move])
+  if (e) {
+    const attacks = check(c[0], g);
+    moves = moves.filter(move => !attacks.includes(move));
   }
   
   return moves;
 }
+
 
 function genPawnMoves(p, c, g) {
   let moves = [];
