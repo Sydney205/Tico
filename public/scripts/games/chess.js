@@ -6,8 +6,12 @@ socket.emit('chess_join', roomName);
 const board = document.getElementById("board");
 const squares = document.getElementsByClassName('squares');
 
+let whiteKingCheck = false;
+let blackKingCheck = false;
+
 let player_turn = true;
 let foo = true;
+let atkPiece = null;
 
 let gameObj = {
   squares: [],
@@ -29,7 +33,6 @@ function clearPreviousMoves() {
     
   }
   
-
   for (let i = 0; i < previousMoves.length; i++) {
     const newSquare = squares[previousMoves[i]].cloneNode(true);
     squares[previousMoves[i]].parentNode.replaceChild(newSquare, squares[previousMoves[i]]);
@@ -142,9 +145,121 @@ socket.on('chess_updateGameState', (newGameState) => {
       }
     }
   }
+
+  check()
+  checkMate()
 })
 
-function check(c, g) {
+function check() {
+  whiteKingCheck = false;
+  blackKingCheck = false;
+  let whiteKingPos, blackKingPos;
+
+  // Find the positions of the kings
+  for (let i = 0; i < gameObj.squares.length; i++) {
+    if (gameObj.squares[i] === "WK") {
+      whiteKingPos = i;
+    } else if (gameObj.squares[i] === "BK") {
+      blackKingPos = i;
+    }
+  }
+
+  if (checkSquare("W", gameObj.squares).includes(whiteKingPos)) {
+    squares[whiteKingPos].style.backgroundColor = "rgb(255 100 100)";
+    whiteKingCheck = true;
+  }
+  if (checkSquare("B", gameObj.squares).includes(blackKingPos)) {
+    squares[blackKingPos].style.backgroundColor = "rgb(255 100 100)";
+    blackKingCheck = true;
+  }
+
+  if (!whiteKingCheck) {
+    squares[whiteKingPos].style.backgroundColor = 
+      squares[whiteKingPos].className.includes('whiteSquare') ? 'whitesmoke' : 'rgb(109 100 229)';
+  }
+  if (!blackKingCheck) {
+    squares[blackKingPos].style.backgroundColor = 
+      squares[blackKingPos].className.includes('whiteSquare') ? 'whitesmoke' : 'rgb(109 100 229)';
+  }
+}
+
+function checkMate() {
+  if (whiteKingCheck) {
+    let kingM = genKingMoves(whiteKingPos, "WK", gameObj.squares);
+
+    // Check if any other piece can block the check or capture the attacking piece
+    let otherMoves = getBlockingMoves("W", whiteKingPos);
+
+    if (kingM.length === 0 && otherMoves.length === 0) {
+      alert("Checkmate... Black wins");
+    }
+  }
+
+  if (blackKingCheck) {
+    let kingM = genKingMoves(blackKingPos, "BK", gameObj.squares);
+
+    let otherMoves = getBlockingMoves("B", blackKingPos);
+
+    if (kingM.length === 0 && otherMoves.length === 0) {
+      alert("Checkmate... White wins");
+    }
+  }
+}
+
+function getDefenders(color) {
+  let moves = [];
+
+  for (let i = 0; i < gameObj.squares.length; i++) {
+    if (gameObj.squares[i] !== "" && gameObj.squares[i][0] !== color) {}
+  }
+}
+
+function getBlockingMoves(color, kingPos) {
+  let moves = [];
+  
+  for (let i = 0; i < gameObj.squares.length; i++) {
+    if (gameObj.squares[i] !== "" && gameObj.squares[i][0] === color) {
+      let pieceMoves = [];
+      let piece = gameObj.squares[i];
+
+      switch (piece[1]) {
+        case "P":
+          pieceMoves = genPawnMoves(i, piece, gameObj.squares);
+          break;
+        case "K":
+          pieceMoves = genKingMoves(i, piece, gameObj.squares, false);
+          break;
+        case "Q":
+          pieceMoves = genQueenMoves(i, gameObj.squares);
+          break;
+        case "R":
+          pieceMoves = genRookMoves(i, gameObj.squares);
+          break;
+        case "B":
+          pieceMoves = genBishopMoves(i, gameObj.squares);
+          break;
+        case "n":
+          pieceMoves = genKnightMoves(i, gameObj.squares);
+          break;
+      }
+
+      for (let move of pieceMoves) {
+        let tempSquares = [...gameObj.squares];
+        tempSquares[move] = piece;
+        tempSquares[i] = '';
+
+        if (!checkSquare(color, tempSquares).includes(kingPos)) {
+          moves.push(move);
+        }
+      }
+    }
+  }
+
+  return moves;
+}
+
+
+function checkSquare(c, g) {
   let check_moves = [];
   for (let i = 0; i < squares.length; i++) {
     if (squares[i].childNodes[0]) {
@@ -194,7 +309,7 @@ function genKingMoves(p, c, g, e = true) {
   }
 
   if (e) {
-    const attacks = check(c[0], g);
+    const attacks = checkSquare(c[0], g);
     moves = moves.filter(move => !attacks.includes(move));
   }
   
@@ -246,9 +361,7 @@ function genPawnMoves(p, c, g) {
 function genBishopMoves(p, g) {
   let moves = [];
   const directions = [
-    [-1, -1],      [-1, 1], 
-      /*Bishop's moves*/
-    [1, -1],       [1, 1]   
+    [-1, -1], [-1, 1], [1, -1], [1, 1]   
   ];
 
   for (const [dr, dc] of directions) {
@@ -277,10 +390,7 @@ function genBishopMoves(p, g) {
 function genRookMoves(p, g) {
   let moves = [];
   const directions = [
-    [-1, 0],
-    [0, -1],
-    [0, 1],
-    [1, 0]
+    [-1, 0], [0, -1], [0, 1], [1, 0]
   ];
 
   for (const [dr, dc] of directions) {
@@ -309,15 +419,7 @@ function genRookMoves(p, g) {
 function genQueenMoves(p, g) {
   let moves = [];
   const directions = [
-    [-1, -1],                    [-1, 1],    
-    
-                    [-1, 0], 
-            
-        [1, 0],/*Queen's moves*/[0, -1], 
-      
-                    [0, 1], 
-            
-     [1, -1],                    [1, 1] 
+    [-1, -1], [-1, 1], [-1, 0], [1, 0], [0, -1], [0, 1], [1, -1], [1, 1] 
   ];
 
   for (const [dr, dc] of directions) {
@@ -348,11 +450,7 @@ function genKnightMoves(p, g) {
   const col = p % 8;
 
   const directions = [
-      [-2, -1],  [-1, -2], 
-    [1, -2],         [2, -1],
-      /*Knight's moves*/
-    [2, 1],         [1, 2], 
-       [-1, 2],  [-2, 1]
+    [-2, -1], [-1, -2], [1, -2], [2, -1], [2, 1], [1, 2], [-1, 2], [-2, 1]
   ];
 
   for (const [dr, dc] of directions) {
@@ -408,6 +506,8 @@ function showPieceMoves(p, c, g) {
       targetSquare.style.backgroundColor = 'rgb(40 255 255)';
     }
   }
+
+  check()
 }
 
 function enableMove(selectedPiece) {

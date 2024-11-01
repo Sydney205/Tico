@@ -1,6 +1,7 @@
 const navContent = document.getElementById("navContent");
 
 let navOpened = false;
+let theme = "green";
 
 function toggleMenu(element, nav) {
   element.classList.toggle("change");
@@ -18,3 +19,8 @@ function navigate(route) {
   window.location.href = `${PORT}${route}`; // usage: navigate("/route")
 }
 
+window.addEventListener("load", () => {
+  if (localStorage.tico_theme) {
+    theme = localStorage.tico_theme;
+  }
+})

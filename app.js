@@ -31,6 +31,6 @@ app.use('/chess', chessRoutes);
 setupSocket(io);
 
 server.listen(PORT, () => {
-  console.log(`\n Tico is running at http://localhost:${PORT}`);
+  console.log(`\n \x1b[92mTi\x1b[0mco is running on port ${PORT}`);
 });
 
