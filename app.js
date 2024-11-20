@@ -1,25 +1,25 @@
-import express from 'express';
-import { fileURLToPath } from 'url' 
-import { dirname, join } from 'path'
-import { createServer } from 'http';
-import { Server } from 'socket.io';
-import { nunjucksConfig } from './config/nunjucks.js'
+const express = require('express');
+const { fileURLToPath } = require('url');
+const { dirname, join } = require('path');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+const { nunjucksConfig } = require('./config/nunjucks');
+
 
 // Routes...
-import roots from './routes/index.js';
-import tttRoutes from './routes/tictactoe.js';
-import chessRoutes from './routes/chess.js';
+const roots = require('./routes/index');
+const tttRoutes = require('./routes/tictactoe');
+const chessRoutes = require('./routes/chess');
 
-import { setupSocket } from './config/socket.js';
+const { setupSocket } = require('./config/socket');
 
 const PORT = process.env.PORT || 2050;
-const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
-nunjucksConfig(app)
+nunjucksConfig(app);
 
 app.use(express.json());
 app.use(express.static(join(__dirname, 'public')));
@@ -33,4 +33,3 @@ setupSocket(io);
 server.listen(PORT, () => {
   console.log(`\n \x1b[92mTi\x1b[0mco is running on port ${PORT}`);
 });
-

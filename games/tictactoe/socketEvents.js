@@ -1,6 +1,6 @@
-import { gameStates, initializeGameState } from './gameLogic.js';
+const { gameStates, initializeGameState } = require('./gameLogic.js');
 
-export function setupTicTacToeSockets(io, socket) {
+function setupTicTacToeSockets(io, socket) {
   socket.on('ttt_join', (room) => {
     const roomObject = io.sockets.adapter.rooms.get(room);
     const clients = roomObject ? roomObject.size : 0;
@@ -66,3 +66,4 @@ function checkForWinner(cells, symbol) {
   return null;
 }
 
+module.exports = { setupTicTacToeSockets };

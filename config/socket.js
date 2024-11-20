@@ -1,7 +1,7 @@
-import { setupTicTacToeSockets } from '../games/tictactoe/socketEvents.js';
-import { setupChessSockets } from '../games/chess/socketEvents.js';
+const { setupTicTacToeSockets } = require('../games/tictactoe/socketEvents.js');
+const { setupChessSockets } = require('../games/chess/socketEvents.js');
 
-export const setupSocket = (io) => {
+const setupSocket = (io) => {
   io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);
 
@@ -12,5 +12,8 @@ export const setupSocket = (io) => {
       console.log('A user disconnected:', socket.id);
     });
   });
-}
+};
+
+module.exports = { setupSocket };
+
 

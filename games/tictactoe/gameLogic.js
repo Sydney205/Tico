@@ -1,6 +1,6 @@
-export const gameStates = {};
+const gameStates = {};
 
-export const initializeGameState = () => {
+const initializeGameState = () => {
   return {
     cells: Array(9).fill(null),
     currentPlayer: 'X'
@@ -8,3 +8,4 @@ export const initializeGameState = () => {
   };
 };
 
+module.exports = { gameStates, initializeGameState };
