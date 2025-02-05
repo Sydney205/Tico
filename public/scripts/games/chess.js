@@ -324,6 +324,15 @@ function simulateMove(from, to, piece) {
 }
 
 
+// Function to get pieces that can defend the king
+function getDefenders(color) {
+  let moves = [];
+  for (let i = 0; i < gameObj.squares.length; i++) {
+    if (gameObj.squares[i] !== "" && gameObj.squares[i][0] !== color) {}
+  }
+/}
+
+
 function checkSquare(c, g) {
   let check_moves = [];
   
@@ -406,23 +415,21 @@ function genKingMoves(p, c, g, e = true) {
   ];
 
   // Check each direction for valid moves
-  for (const [dr, dc] of directions) {
+  directions.forEach(([dr, dc]) => {
     const newRow = row + dr;
     const newCol = col + dc;
-    if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
-      const newPos = newRow * 8 + newCol;
-      if (g[newPos] === '' || g[newPos][0] !== g[p][0]) {
-        moves.push(newPos);
-      }
-    }
-  }
+    const newPos = newRow * 8 + newCol;
 
+    if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8 && !g[newPos].includes(c)) {
+      moves.push(newPos);
+    }
+  });
+  
   // Filter out moves that put the king in check
   if (e) {
     const attacks = checkSquare(c[0], g);
     moves = moves.filter(move => !attacks.includes(move));
   } else {
-    // Add castling move if applicable
     const castlingMove = checkCastling(c, p, p + 2, g); // Check for castling to the right
     if (castlingMove !== p) moves.push(castlingMove);
 
@@ -435,34 +442,49 @@ function genKingMoves(p, c, g, e = true) {
 
 
 // Generate possible moves for a pawn
-function genPawnMoves(p, c, g) {
-  let moves = [];
-  const d = c.includes('W') ? -1 : 1; // Direction for white (-1) and black (1)
+// function genPawnMoves(p, c, g) {
+//   let moves = [];
+//   const d = c.includes('W') ? -1 : 1; // Direction for white (-1) and black (1)
 
-  const move = p + (d * 8);
-  const doubleMove = move + (d * 8);
-  const captureRight = p + (d * 7);
-  const captureLeft = p + (d * 9);
+//   const move = p + (d * 8);
+//   const doubleMove = move + (d * 8);
+//   const captureRight = p + (d * 7);
+//   const captureLeft = p + (d * 9);
   
-  // Regular move forward
-  if (move >= 0 && move < 64 && g[move] === '') {
-    moves.push(move);
+//   // Regular move forward
+//   if (move >= 0 && move < 64 && g[move] === '') {
+//     moves.push(move);
 
-    // Double move from starting position
-    if ((c.includes('W') && p >= 48 || c.includes('B') && p <= 15) && g[doubleMove] === '') {
-      moves.push(doubleMove);
-    }
+//     // Double move from starting position
+//     if ((c.includes('W') && p >= 48 || c.includes('B') && p <= 15) && g[doubleMove] === '') {
+//       moves.push(doubleMove);
+//     }
+//   }
+
+//   // Capture moves
+//   if (g[captureRight] !== '' && Math.abs((p % 8) - (captureRight % 8)) === 1 && !g[captureRight].includes(c[0])) {
+//     moves.push(captureRight);
+//   }
+
+//   if (g[captureLeft] !== '' && Math.abs((p % 8) - (captureLeft % 8)) === 1 && !g[captureLeft].includes(c[0])) {
+//     moves.push(captureLeft);
+//   }
+  
+//   return moves;
+// }
+
+
+function genPawnMoves(p, piece, gameState) {
+  let moves = [];
+  const row = Math.floor(p / 8);
+  const col = p % 8;
+  const direction = piece.includes("W") ? -1 : 1; // Direction of movement for White or Black pawn
+
+  // Regular pawn moves
+  if (gameState[p + 8 * direction] === "") {  // Move forward one square
+    moves.push(p + 8 * direction);
   }
-
-  // Capture moves
-  if (g[captureRight] !== '' && Math.abs((p % 8) - (captureRight % 8)) === 1 && !g[captureRight].includes(c[0])) {
-    moves.push(captureRight);
-  }
-
-  if (g[captureLeft] !== '' && Math.abs((p % 8) - (captureLeft % 8)) === 1 && !g[captureLeft].includes(c[0])) {
-    moves.push(captureLeft);
-  }
-
+  
   // En passant move (if applicable)
   const enPassantTarget = enPassantPossible;
   if (enPassantTarget !== -1 && Math.abs(p - enPassantTarget) === 8) {
@@ -480,9 +502,13 @@ function genPawnMoves(p, c, g) {
   if (gameState[p + 9 * direction] && !gameState[p + 9 * direction].includes(piece[0])) { // Capture top-right
     moves.push(p + 9 * direction);
   }
-  
+
   return moves;
 }
+
+
+
+
 
 // Generate all possible moves for a bishop
 function genBishopMoves(p, g) {
