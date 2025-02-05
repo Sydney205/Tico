@@ -1,6 +1,6 @@
-const nunjucks = require("nunjucks");
+import nunjucks from "nunjucks";
 
-module.exports.nunjucksConfig = function(app) {
+export const nunjucksConfig = function(app) {
   nunjucks.configure('views', {
     autoscape: true,
     express: app

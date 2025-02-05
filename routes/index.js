@@ -1,4 +1,4 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
 const gameList = [
@@ -34,4 +34,4 @@ router.get('/nothing', (req, res) => {
   res.render('nothing.html')
 })
 
-module.exports = router;
+export default router;

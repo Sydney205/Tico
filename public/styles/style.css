@@ -13,6 +13,10 @@
   padding: 5px; 
 }
 
+#board {
+  transform: scale(0.75);
+}
+
 /* Mobile viewports */
 @media (max-width: 768px) {
   /* .squares { */

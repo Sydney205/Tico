@@ -1,21 +1,22 @@
-const gameStates = {};
+export const gameStates = {};
 
-const initializeGameState = () => {
+export const initializeGameState = () => {
   return {
-    squares: [
-      'BR', 'BKn', 'BSh','BK', 'BQ', 'BSh', 'BKn', 'BR',
-      'BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP',
-      
-      '', '', '', '', '', '', '', '',
-      '', '', '', '', '', '', '', '',
-      '', '', '', '', '', '', '', '',
-      '', '', '', '', '', '', '', '', 
-      
-      'WP', 'WP', 'WP','WP', 'WP', 'WP', 'WP', 'WP',
-      'WR', 'WKn', 'WSh', 'WK', 'WQ', 'WSh', 'WKn', 'WR'
-    ],
+    squares: ['BR', 'BN', 'BSh', 'BK', 'BQ', 'BSh', '', 'BR', '', 'BP', '', '', 'BP', 'BP', 'BP', 'BP', 'BP', '', '', '', '', '', '', '', '', '', 'WQ', 'BP', '', '', '', '', '', '', '', '', '', 'WSh', 'BN', '', '', '', '', 'WP', '', '', '', '', 'WP', 'WP', 'WP', '', 'WP', 'WP', 'WP', 'WP', 'WR', 'WN', '', 'WK', '', 'WSh', 'WN', 'WR'],
     currentPlayer: 'W'
   }
 };
 
-module.exports = { gameStates, initializeGameState };
+
+// [
+//       'BR', 'BN', 'BSh','BK', 'BQ', 'BSh', 'BN', 'BR',
+//       'BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP', 'BP',
+      
+//       '', '', '', '', '', '', '', '',
+//       '', '', '', '', '', '', '', '',
+//       '', '', '', '', '', '', '', '',
+//       '', '', '', '', '', '', '', '', 
+      
+//       'WP', 'WP', 'WP','WP', 'WP', 'WP', 'WP', 'WP',
+//       'WR', 'WN', 'WSh', 'WK', 'WQ', 'WSh', 'WN', 'WR'
+//     ]

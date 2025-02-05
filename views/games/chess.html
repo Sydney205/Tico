@@ -1,20 +1,20 @@
 {% extends "../layouts/gameLayout.html" %}
 
 {% block gameLayout %}
-  <!-- <div class="mb-4 bg-Tgreen text-white p-4 px-10 rounded-md shadow-lg"> -->
-  <!--   <div class="flex justify-center gap-10"> -->
-  <!--     <p class="text-2xl font-bold">White</p> -->
-  <!--     <p class="text-2xl font-bold">V<span class="text-black">S</span></p> -->
-  <!--     <p class="text-2xl font-bold text-black">Black</p> -->
-  <!--   </div> -->
-  <!--   <div class="flex justify-center gap-12 mt-2"> -->
-  <!--     <div id="xScores" class="text-2xl font-bold"></div> -->
-  <!--     <div class="text-2xl">---</div> -->
-  <!--     <div id="yScores" class="text-2xl font-bold"></div> -->
-  <!--   </div> -->
-  <!-- </div> -->
+  <div class="mb-8 bg-indigo-600 text-white p-2 px-10 rounded-md shadow-lg">
+    <div class="flex justify-center gap-10">
+      <p class="text-2xl font-bold">White</p>
+      <p class="text-2xl font-bold">V<span class="text-black">S</span></p>
+      <p class="text-2xl font-bold text-black">Black</p>
+    </div>
+    <div class="flex justify-center gap-12 mt-2">
+      <div id="xScores" class="text-2xl font-bold"></div>
+      <div class="text-2xl">---</div>
+      <div id="yScores" class="text-2xl font-bold"></div>
+    </div>
+  </div>
 
-  <div class="grid grid-cols-8 " id="board">
+  <div class="grid grid-cols-8" id="board">
     <div id="0" class="squares purpleSquare"></div>
     <div id="1" class="squares whiteSquare"></div>
     <div id="2" class="squares purpleSquare"></div>

@@ -1,8 +1,8 @@
-const { gameStates, initializeGameState } = require('./gameLogic.js');
+import { gameStates, initializeGameState } from './gameLogic.js';
 
 // let foo = true;
 
-function setupChessSockets(io, socket) {
+export function setupChessSockets(io, socket) {
   socket.on('chess_join', (room) => {
     const roomObject = io.sockets.adapter.rooms.get(room);
     const clients = roomObject ? roomObject.size : 0;
@@ -32,4 +32,3 @@ function setupChessSockets(io, socket) {
   });
 }
 
-module.exports = { setupChessSockets };

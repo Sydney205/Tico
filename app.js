@@ -1,35 +1,35 @@
-const express = require('express');
-const { fileURLToPath } = require('url');
-const { dirname, join } = require('path');
-const { createServer } = require('http');
-const { Server } = require('socket.io');
-const { nunjucksConfig } = require('./config/nunjucks');
-
+import express from "express";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import { nunjucksConfig } from "./config/nunjucks.js";
 
 // Routes...
-const roots = require('./routes/index');
-const tttRoutes = require('./routes/tictactoe');
-const chessRoutes = require('./routes/chess');
+import roots from "./routes/index.js";
+import tttRoutes from "./routes/tictactoe.js";
+import chessRoutes from "./routes/chess.js";
 
-const { setupSocket } = require('./config/socket');
+import { setupSocket } from "./config/socket.js";
 
 const PORT = process.env.PORT || 2050;
 
 const app = express();
+const __dirname = dirname(fileURLToPath(import.meta.url))
 const server = createServer(app);
 const io = new Server(server);
 
 nunjucksConfig(app);
 
 app.use(express.json());
-app.use(express.static(join(__dirname, 'public')));
+app.use(express.static(join(__dirname, "public")));
 
-app.use('/', roots);
-app.use('/tictactoe', tttRoutes);
-app.use('/chess', chessRoutes);
+app.use("/", roots);
+app.use("/tictactoe", tttRoutes);
+app.use("/chess", chessRoutes);
 
 setupSocket(io);
 
 server.listen(PORT, () => {
-  console.log(`\n \x1b[92mTi\x1b[0mco is running on port ${PORT}`);
+  console.log(`\n Tico is running on port ${PORT}`);
 });

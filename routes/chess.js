@@ -1,4 +1,4 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
 router.get('/create-join-room', (req, res) => {
@@ -11,5 +11,5 @@ router.get('/:roomName', (req, res) => {
   res.render('./games/chess.html', { title: `room: ${req.params.roomName}` })
 })
 
-module.exports = router;
+export default router;
 
