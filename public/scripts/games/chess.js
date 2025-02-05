@@ -325,12 +325,12 @@ function simulateMove(from, to, piece) {
 
 
 // Function to get pieces that can defend the king
-function getDefenders(color) {
-  let moves = [];
-  for (let i = 0; i < gameObj.squares.length; i++) {
-    if (gameObj.squares[i] !== "" && gameObj.squares[i][0] !== color) {}
-  }
-/}
+// function getDefenders(color) {
+//   let moves = [];
+//   for (let i = 0; i < gameObj.squares.length; i++) {
+//     if (gameObj.squares[i] !== "" && gameObj.squares[i][0] !== color) {}
+//   }
+// }
 
 
 function checkSquare(c, g) {
