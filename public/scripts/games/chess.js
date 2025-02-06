@@ -281,6 +281,21 @@ function disableNonKingPieces(color) {
       if (!canBlockCheck) {
         squares[i].childNodes[0].style.cursor = "default";
         squares[i].childNodes[0].removeEventListener('click', handlePieceClick);
+      } else {
+        // Enable pieces that can block the check
+        squares[i].childNodes[0].style.cursor = "pointer";
+        squares[i].childNodes[0].addEventListener('click', () => {
+          selectedPiece.id = i;
+          selectedPiece.name = squares[i].childNodes[0].id;
+          console.log(selectedPiece);
+
+          // Clear highlights of previous moves
+          clearPreviousMoves();
+
+          // Display valid moves for the selected piece
+          showPieceMoves(selectedPiece.id, selectedPiece.name, gameObj.squares);
+          enableMove(selectedPiece);
+        });
       }
     }
   }
@@ -406,50 +421,77 @@ function checkEnPassant(piece, from, to, gameState) {
  * Returns the target square if valid; otherwise, returns the target unchanged.
  *
  */
+// Add this new function to check if a position is under attack
+function isInCheck(position, boardState) {
+    const piece = boardState[position];
+    const color = piece && piece[0]; // Get the color of the piece (W or B)
+    if (!color) return false;
+    
+    // Get all opponent's moves
+    const opponentMoves = checkSquare(color, boardState);
+    return opponentMoves.includes(position);
+}
+
+// Updated checkCastling function
 function checkCastling(piece, from, to, gameState) {
-  if (piece.endsWith('K')) {
-    const isWhite = piece === 'WK';
-    const row = isWhite ? 7 : 0;
-    const kingStart = isWhite ? 60 : 4;
-    const rookStartKingSide = isWhite ? 63 : 7;
-    const rookStartQueenSide = isWhite ? 56 : 0;
+    if (piece.endsWith('K')) {
+        const isWhite = piece === 'WK';
+        const kingStart = isWhite ? 60 : 4;
+        const rookStartKingSide = isWhite ? 63 : 7;
+        const rookStartQueenSide = isWhite ? 56 : 0;
 
-    // Ensure the king and rook have not moved
-    if ((isWhite && whiteHasCastled) || (!isWhite && blackHasCastled)) {
-      return to;
-    }
+        // Check if king or rooks have moved
+        if (isWhite && whiteKingMoved) return to;
+        if (!isWhite && blackKingMoved) return to;
+        
+        // Check if appropriate rook has moved
+        if (isWhite && whiteRookMoved) return to;
+        if (!isWhite && blackRookMoved) return to;
 
-    // Castling to the king side
-    if (to === kingStart + 2) {
-      if (gameState[kingStart + 1] === '' && gameState[kingStart + 2] === '' && !isInCheck(from, gameState)) {
-        // Ensure the squares the king passes through are not under attack
-        const newGameState = simulateMove(kingStart, kingStart + 2, piece);
-        if (!isInCheck(kingStart + 1, gameState) && !isInCheck(kingStart + 2, newGameState)) {
-          return to;
+        // Kingside castling
+        if (to === kingStart + 2) {
+            // Check if kingside rook is present
+            if (gameState[rookStartKingSide] !== (isWhite ? 'WR' : 'BR')) return to;
+            
+            // Check if path is clear
+            if (gameState[kingStart + 1] !== '' || gameState[kingStart + 2] !== '') return to;
+            
+            // Check if king is in check or passes through check
+            if (isInCheck(kingStart, gameState) || 
+                isInCheck(kingStart + 1, gameState) || 
+                isInCheck(kingStart + 2, gameState)) return to;
+            
+            // Move rook
+            gameState[kingStart + 1] = gameState[rookStartKingSide];
+            gameState[rookStartKingSide] = '';
+            return to;
         }
-      }
-    }
 
-    // Castling to the queen side
-    if (to === kingStart - 2) {
-      if (gameState[kingStart - 1] === '' && gameState[kingStart - 2] === '' && gameState[kingStart - 3] === '' && !isInCheck(from, gameState)) {
-        // Ensure the squares the king passes through are not under attack
-        const newGameState = simulateMove(kingStart, kingStart - 2, piece);
-        if (!isInCheck(kingStart - 1, gameState) && !isInCheck(kingStart - 2, newGameState)) {
-          return to;
+        // Queenside castling
+        if (to === kingStart - 2) {
+            // Check if queenside rook is present
+            if (gameState[rookStartQueenSide] !== (isWhite ? 'WR' : 'BR')) return to;
+            
+            // Check if path is clear
+            if (gameState[kingStart - 1] !== '' || 
+                gameState[kingStart - 2] !== '' || 
+                gameState[kingStart - 3] !== '') return to;
+            
+            // Check if king is in check or passes through check
+            if (isInCheck(kingStart, gameState) || 
+                isInCheck(kingStart - 1, gameState) || 
+                isInCheck(kingStart - 2, gameState)) return to;
+            
+            // Move rook
+            gameState[kingStart - 1] = gameState[rookStartQueenSide];
+            gameState[rookStartQueenSide] = '';
+            return to;
         }
-      }
     }
-  }
-  return to;  // Not a castling move
+    return to;
 }
 
 
-
-
-
-
-// Example: Enhanced genKingMoves that uses checkCastling
 function genKingMoves(p, c, g, e = true) {
   let moves = [];
   const row = Math.floor(p / 8);
@@ -457,16 +499,15 @@ function genKingMoves(p, c, g, e = true) {
 
   // Possible king moves in all 8 directions
   const directions = [
-    [-1, -1],   [-1, 0],    [-1, 1],
-    [0, -1],/*King's moves*/[0, 1],
-    [1, -1],    [1, 0],      [1, 1]
+    [-1, -1], [-1, 0], [-1, 1],
+    [0, -1], [0, 1],
+    [1, -1], [1, 0], [1, 1]
   ];
 
   // Check each direction for valid moves
   directions.forEach(([dr, dc]) => {
     const newRow = row + dr;
     const newCol = col + dc;
-    // const newPos = newRow * 8 + newCol;
 
     if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
       const newPos = newRow * 8 + newCol;
@@ -475,7 +516,7 @@ function genKingMoves(p, c, g, e = true) {
       }
     }
   });
-  
+
   // Filter out moves that put the king in check
   if (e) {
     const attacks = checkSquare(c[0], g);
@@ -487,7 +528,7 @@ function genKingMoves(p, c, g, e = true) {
     const castlingMoveLeft = checkCastling(c, p, p - 2, g); // Check for castling to the left
     if (castlingMoveLeft !== p) moves.push(castlingMoveLeft);
   }
-  
+
   return moves;
 }
 
@@ -734,21 +775,10 @@ function enableMove(selectedPiece) {
 
   if (isKingChecked) {
     let kingPos = findKingPosition(currentPlayer, gameObj.squares);
-    let attackers = checkSquare(currentPlayer, gameObj.squares);
     let blockingMoves = getBlockingMoves(currentPlayer, kingPos);
 
-    // If the selected piece is the king, allow only moves that take it out of check.
-    if (selectedPiece.name.includes("K")) {
-      moves = moves.filter(move => {
-        let newState = simulateMove(selectedPiece.id, move, selectedPiece.name);
-        let newKingPos = findKingPosition(currentPlayer, newState);
-        let newAttackers = checkSquare(currentPlayer, newState);
-        return !newAttackers.includes(newKingPos);
-      });
-    } else {
-      // Allow only moves that block the check or capture the attacking piece.
-      moves = moves.filter(move => blockingMoves.includes(move));
-    }
+    // Allow only moves that block the check or capture the attacking piece.
+    moves = moves.filter(move => blockingMoves.includes(move));
   }
 
   if (moves.length === 0) {
@@ -760,24 +790,49 @@ function enableMove(selectedPiece) {
     squares[move].style.cursor = "pointer";
 
     squares[move].addEventListener('click', () => {
-      // Update castling flags if the king is performing castling.
-      if (selectedPiece.name === "WK" && (move === 62 || move === 58)) {
-        whiteHasCastled = true;
-      }
-      if (selectedPiece.name === "BK" && (move === 6 || move === 2)) {
-        blackHasCastled = true;
-      }
+        // Track rook movements
+        if (selectedPiece.name === 'WR') {
+            if (selectedPiece.id === 63 || selectedPiece.id === 56) {
+                whiteRookMoved = true;
+            }
+        }
+        if (selectedPiece.name === 'BR') {
+            if (selectedPiece.id === 7 || selectedPiece.id === 0) {
+                blackRookMoved = true;
+            }
+        }
+
+        // Track king movements
+        if (selectedPiece.name === 'WK') {
+            whiteKingMoved = true;
+            // Handle kingside castling
+            if (move === 62) {
+                gameObj.squares[61] = gameObj.squares[63];
+                gameObj.squares[63] = '';
+            }
+            // Handle queenside castling
+            if (move === 58) {
+                gameObj.squares[59] = gameObj.squares[56];
+                gameObj.squares[56] = '';
+            }
+        }
+        if (selectedPiece.name === 'BK') {
+            blackKingMoved = true;
+            // Handle kingside castling
+            if (move === 6) {
+                gameObj.squares[5] = gameObj.squares[7];
+                gameObj.squares[7] = '';
+            }
+            // Handle queenside castling
+            if (move === 2) {
+                gameObj.squares[3] = gameObj.squares[0];
+                gameObj.squares[0] = '';
+            }
+        }
 
       // Perform the move.
       gameObj.squares[selectedPiece.id] = '';
       gameObj.squares[move] = `${selectedPiece.name}`;
-
-      if (selectedPiece.name === "WK") {
-        whiteKingMoved = true;
-      }
-      if (selectedPiece.name === "BK") {
-        blackKingMoved = true;
-      }
 
       // Switch turns.
       gameObj.currentPlayer = (currentPlayer === 'W') ? 'B' : 'W';
