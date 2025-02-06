@@ -20,6 +20,16 @@ let player_turn = true;
 let foo = true; // Used to toggle board rotation
 let atkPiece = null; // Stores the attacking piece
 
+let enPassantPossible = -1;  // Store the square for possible en passant capture
+let whiteHasCastled = false;
+let blackHasCastled = false;
+
+let whiteKingMoved = false;
+let blackKingMoved = false;
+
+let whiteRookMoved = false;
+let blackRookMoved = false;
+
 // Object to store the game state
 let gameObj = {
   squares: [],
@@ -238,18 +248,45 @@ function check() {
 
 // Function to disable all non-king pieces, including knights
 function disableNonKingPieces(color) {
+  let kingPos = findKingPosition(color, gameObj.squares);
+  let blockingMoves = getBlockingMoves(color, kingPos) || []; // Ensure it's an array
+
   for (let i = 0; i < squares.length; i++) {
     if (squares[i].childNodes[0]) {
       const piece = squares[i].childNodes[0].id;
 
-      // If the piece is neither a king nor a knight, make it unclickable
-      if (!piece.includes("K") && piece.includes(color)) {
+      // Allow the king to move
+      if (piece.includes("K") && piece.includes(color)) {
+        continue;
+      }
+
+      let pieceMoves = [];
+
+      // Generate possible moves based on piece type
+      if (piece.includes("P")) {
+        pieceMoves = genPawnMoves(i, piece, gameObj.squares) || [];
+      } else if (piece.includes("N")) {
+        pieceMoves = genKnightMoves(i, gameObj.squares) || [];
+      } else if (piece.includes("B")) {
+        pieceMoves = genBishopMoves(i, gameObj.squares) || [];
+      } else if (piece.includes("R")) {
+        pieceMoves = genRookMoves(i, gameObj.squares) || [];
+      } else if (piece.includes("Q")) {
+        pieceMoves = genQueenMoves(i, gameObj.squares) || [];
+      }
+
+      // Ensure pieceMoves is an array before calling .some()
+      let canBlockCheck = pieceMoves.length > 0 && pieceMoves.some(move => blockingMoves.includes(move));
+
+      if (!canBlockCheck) {
         squares[i].childNodes[0].style.cursor = "default";
         squares[i].childNodes[0].removeEventListener('click', handlePieceClick);
       }
     }
   }
 }
+
+
 
 
 
@@ -323,16 +360,6 @@ function simulateMove(from, to, piece) {
   return newBoard;
 }
 
-
-// Function to get pieces that can defend the king
-// function getDefenders(color) {
-//   let moves = [];
-//   for (let i = 0; i < gameObj.squares.length; i++) {
-//     if (gameObj.squares[i] !== "" && gameObj.squares[i][0] !== color) {}
-//   }
-// }
-
-
 function checkSquare(c, g) {
   let check_moves = [];
   
@@ -361,12 +388,6 @@ function checkSquare(c, g) {
   return check_moves;
 }
 
-
-
-let enPassantPossible = -1;  // Store the square for possible en passant capture
-let whiteHasCastled = false;
-let blackHasCastled = false;
-
 // Function to check if en passant is possible
 function checkEnPassant(piece, from, to, gameState) {
   if (piece.endsWith('P') && gameState[from] === "" && Math.abs(to - from) === 1 && enPassantPossible !== -1) {
@@ -380,19 +401,43 @@ function checkEnPassant(piece, from, to, gameState) {
   return to; // No en passant capture
 }
 
-// Function to handle castling
+/**
+ * Determines if the king's target move qualifies as a valid castling move.
+ * Returns the target square if valid; otherwise, returns the target unchanged.
+ *
+ */
 function checkCastling(piece, from, to, gameState) {
   if (piece.endsWith('K')) {
     const isWhite = piece === 'WK';
-    if (isWhite && !whiteHasCastled && !gameState[from] && gameState[to] === "") {
-      // Castling logic for White
-      if (from === 60 && (to === 62 || to === 58)) {  // Valid castling positions for white
-        return to;
+    const row = isWhite ? 7 : 0;
+    const kingStart = isWhite ? 60 : 4;
+    const rookStartKingSide = isWhite ? 63 : 7;
+    const rookStartQueenSide = isWhite ? 56 : 0;
+
+    // Ensure the king and rook have not moved
+    if ((isWhite && whiteHasCastled) || (!isWhite && blackHasCastled)) {
+      return to;
+    }
+
+    // Castling to the king side
+    if (to === kingStart + 2) {
+      if (gameState[kingStart + 1] === '' && gameState[kingStart + 2] === '' && !isInCheck(from, gameState)) {
+        // Ensure the squares the king passes through are not under attack
+        const newGameState = simulateMove(kingStart, kingStart + 2, piece);
+        if (!isInCheck(kingStart + 1, gameState) && !isInCheck(kingStart + 2, newGameState)) {
+          return to;
+        }
       }
-    } else if (!isWhite && !blackHasCastled && !gameState[from] && gameState[to] === "") {
-      // Castling logic for Black
-      if (from === 4 && (to === 6 || to === 2)) {  // Valid castling positions for black
-        return to;
+    }
+
+    // Castling to the queen side
+    if (to === kingStart - 2) {
+      if (gameState[kingStart - 1] === '' && gameState[kingStart - 2] === '' && gameState[kingStart - 3] === '' && !isInCheck(from, gameState)) {
+        // Ensure the squares the king passes through are not under attack
+        const newGameState = simulateMove(kingStart, kingStart - 2, piece);
+        if (!isInCheck(kingStart - 1, gameState) && !isInCheck(kingStart - 2, newGameState)) {
+          return to;
+        }
       }
     }
   }
@@ -401,7 +446,10 @@ function checkCastling(piece, from, to, gameState) {
 
 
 
-// Generate all possible moves for a king, considering check threats
+
+
+
+// Example: Enhanced genKingMoves that uses checkCastling
 function genKingMoves(p, c, g, e = true) {
   let moves = [];
   const row = Math.floor(p / 8);
@@ -418,10 +466,13 @@ function genKingMoves(p, c, g, e = true) {
   directions.forEach(([dr, dc]) => {
     const newRow = row + dr;
     const newCol = col + dc;
-    const newPos = newRow * 8 + newCol;
+    // const newPos = newRow * 8 + newCol;
 
-    if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8 && !g[newPos].includes(c)) {
-      moves.push(newPos);
+    if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+      const newPos = newRow * 8 + newCol;
+      if (g[newPos] === "" || g[newPos][0] !== g[p][0]) {
+        moves.push(newPos);
+      }
     }
   });
   
@@ -441,50 +492,31 @@ function genKingMoves(p, c, g, e = true) {
 }
 
 
+  // 2302603958
+  // UBA
+  // Obafemi oluwa pelumi
+
+
 // Generate possible moves for a pawn
-// function genPawnMoves(p, c, g) {
-//   let moves = [];
-//   const d = c.includes('W') ? -1 : 1; // Direction for white (-1) and black (1)
-
-//   const move = p + (d * 8);
-//   const doubleMove = move + (d * 8);
-//   const captureRight = p + (d * 7);
-//   const captureLeft = p + (d * 9);
-  
-//   // Regular move forward
-//   if (move >= 0 && move < 64 && g[move] === '') {
-//     moves.push(move);
-
-//     // Double move from starting position
-//     if ((c.includes('W') && p >= 48 || c.includes('B') && p <= 15) && g[doubleMove] === '') {
-//       moves.push(doubleMove);
-//     }
-//   }
-
-//   // Capture moves
-//   if (g[captureRight] !== '' && Math.abs((p % 8) - (captureRight % 8)) === 1 && !g[captureRight].includes(c[0])) {
-//     moves.push(captureRight);
-//   }
-
-//   if (g[captureLeft] !== '' && Math.abs((p % 8) - (captureLeft % 8)) === 1 && !g[captureLeft].includes(c[0])) {
-//     moves.push(captureLeft);
-//   }
-  
-//   return moves;
-// }
-
-
-function genPawnMoves(p, piece, gameState) {
+function genPawnMoves(p, c, g) {
   let moves = [];
-  const row = Math.floor(p / 8);
-  const col = p % 8;
-  const direction = piece.includes("W") ? -1 : 1; // Direction of movement for White or Black pawn
+  const d = c.includes('W') ? -1 : 1; // Direction for white (-1) and black (1)
 
-  // Regular pawn moves
-  if (gameState[p + 8 * direction] === "") {  // Move forward one square
-    moves.push(p + 8 * direction);
-  }
+  const move = p + (d * 8);
+  const doubleMove = move + (d * 8);
+  const captureRight = p + (d * 7);
+  const captureLeft = p + (d * 9);
   
+  // Regular move forward
+  if (move >= 0 && move < 64 && g[move] === '') {
+    moves.push(move);
+
+    // Double move from starting position
+    if ((c.includes('W') && p >= 48 || c.includes('B') && p <= 15) && g[doubleMove] === '') {
+      moves.push(doubleMove);
+    }
+  }
+
   // En passant move (if applicable)
   const enPassantTarget = enPassantPossible;
   if (enPassantTarget !== -1 && Math.abs(p - enPassantTarget) === 8) {
@@ -495,20 +527,17 @@ function genPawnMoves(p, piece, gameState) {
     }
   }
 
-  // Other pawn capture moves (diagonal captures)
-  if (gameState[p + 7 * direction] && !gameState[p + 7 * direction].includes(piece[0])) { // Capture top-left
-    moves.push(p + 7 * direction);
-  }
-  if (gameState[p + 9 * direction] && !gameState[p + 9 * direction].includes(piece[0])) { // Capture top-right
-    moves.push(p + 9 * direction);
+  // Capture moves
+  if (g[captureRight] !== '' && Math.abs((p % 8) - (captureRight % 8)) === 1 && !g[captureRight].includes(c[0])) {
+    moves.push(captureRight);
   }
 
+  if (g[captureLeft] !== '' && Math.abs((p % 8) - (captureLeft % 8)) === 1 && !g[captureLeft].includes(c[0])) {
+    moves.push(captureLeft);
+  }
+  
   return moves;
 }
-
-
-
-
 
 // Generate all possible moves for a bishop
 function genBishopMoves(p, g) {
@@ -632,7 +661,7 @@ function showPieceMoves(p, c, g) {
     p_moves = genKingMoves(p, c, g);
   } else if (c === 'WQ' || c === 'BQ') {
     p_moves = genQueenMoves(p, g);
-  } else if (c === 'WKn' || c === 'BKn') {
+  } else if (c === 'WN' || c === 'BN') {
     p_moves = genKnightMoves(p, g);
   } else if (c === 'WR' || c === 'BR') {
     p_moves = genRookMoves(p, g);
@@ -667,17 +696,29 @@ function showPieceMoves(p, c, g) {
   check(); // Check for game conditions after move display
 }
 
+// Helper: Find the king's position for a given color from a board state.
+function findKingPosition(color, boardState) {
+  const kingId = color === "W" ? "WK" : "BK";
+  for (let i = 0; i < boardState.length; i++) {
+    if (boardState[i] === kingId) {
+      return i;
+    }
+  }
+  return -1; // not found (should not happen)
+}
+
+
 function enableMove(selectedPiece) {
   let moves = [];
-  
-  // Determine valid moves for the selected piece
+
+  // Generate moves based on piece type.
   if (selectedPiece.name === 'WP' || selectedPiece.name === 'BP') {
     moves = genPawnMoves(selectedPiece.id, selectedPiece.name, gameObj.squares);
   } else if (selectedPiece.name === 'WK' || selectedPiece.name === 'BK') {
     moves = genKingMoves(selectedPiece.id, selectedPiece.name, gameObj.squares);
   } else if (selectedPiece.name === 'WQ' || selectedPiece.name === 'BQ') {
     moves = genQueenMoves(selectedPiece.id, gameObj.squares);
-  } else if (selectedPiece.name === 'WKn' || selectedPiece.name === 'BKn') {
+  } else if (selectedPiece.name === 'WN' || selectedPiece.name === 'BN') {
     moves = genKnightMoves(selectedPiece.id, gameObj.squares);
   } else if (selectedPiece.name === 'WR' || selectedPiece.name === 'BR') {
     moves = genRookMoves(selectedPiece.id, gameObj.squares);
@@ -685,34 +726,77 @@ function enableMove(selectedPiece) {
     moves = genBishopMoves(selectedPiece.id, gameObj.squares);
   } else {
     console.log('Piece type not recognized');
+    return;
   }
 
-  // Enable movement by adding event listeners to valid move squares
+  let currentPlayer = gameObj.currentPlayer;
+  let isKingChecked = (currentPlayer === 'W' && whiteKingCheck) || (currentPlayer === 'B' && blackKingCheck);
+
+  if (isKingChecked) {
+    let kingPos = findKingPosition(currentPlayer, gameObj.squares);
+    let attackers = checkSquare(currentPlayer, gameObj.squares);
+    let blockingMoves = getBlockingMoves(currentPlayer, kingPos);
+
+    // If the selected piece is the king, allow only moves that take it out of check.
+    if (selectedPiece.name.includes("K")) {
+      moves = moves.filter(move => {
+        let newState = simulateMove(selectedPiece.id, move, selectedPiece.name);
+        let newKingPos = findKingPosition(currentPlayer, newState);
+        let newAttackers = checkSquare(currentPlayer, newState);
+        return !newAttackers.includes(newKingPos);
+      });
+    } else {
+      // Allow only moves that block the check or capture the attacking piece.
+      moves = moves.filter(move => blockingMoves.includes(move));
+    }
+  }
+
+  if (moves.length === 0) {
+    return; // No valid moves to escape check.
+  }
+
+  // Enable moves by adding event listeners to valid move squares.
   for (const move of moves) {
     squares[move].style.cursor = "pointer";
-    
-    squares[move].addEventListener('click', () => {      
-      gameObj.squares[selectedPiece.id] = ''; // Clear the old position
-      gameObj.squares[move] = `${selectedPiece.name}`; // Move the piece to new position
 
-      // Switch turns between White (W) and Black (B)
-      if (gameObj.currentPlayer === 'W') {
-        gameObj.currentPlayer = 'B';
-      } else {
-        gameObj.currentPlayer = 'W';
+    squares[move].addEventListener('click', () => {
+      // Update castling flags if the king is performing castling.
+      if (selectedPiece.name === "WK" && (move === 62 || move === 58)) {
+        whiteHasCastled = true;
+      }
+      if (selectedPiece.name === "BK" && (move === 6 || move === 2)) {
+        blackHasCastled = true;
       }
 
-      // Emit game state update to the server
+      // Perform the move.
+      gameObj.squares[selectedPiece.id] = '';
+      gameObj.squares[move] = `${selectedPiece.name}`;
+
+      if (selectedPiece.name === "WK") {
+        whiteKingMoved = true;
+      }
+      if (selectedPiece.name === "BK") {
+        blackKingMoved = true;
+      }
+
+      // Switch turns.
+      gameObj.currentPlayer = (currentPlayer === 'W') ? 'B' : 'W';
+
+      // Emit the game state update to the server.
       socket.emit('chess_play', { room: roomName, gameState: gameObj });
 
-      clearPreviousMoves(); // Clear previous move highlights
-      
-      console.log(gameObj); // Debugging log
+      clearPreviousMoves();
+      console.log(gameObj);
     });
   }
 
-  previousMoves = moves; // Store previous moves for later clearance
+  previousMoves = moves;
 }
+
+
+
+
+
 
 window.addEventListener("beforeunload", function (event) {
   // Prevent the default behavior (reloading)
@@ -729,4 +813,75 @@ window.addEventListener('keydown', function (e) {
     alert("Reloading the page is disabled to prevent interrupting the game.");
   }
 });
+
+
+
+
+
+
+/**
+ * Finds all moves by non-king pieces of a given color that, when simulated,
+ * result in the king no longer being in check. These moves either block the check
+ * or capture the attacking piece.
+ *
+ * @param {string} color - "W" for white or "B" for black.
+ * @param {number} kingPos - The current board index of the king.
+ * @returns {Array} - An array of objects, each with properties:
+ *                    { piecePosition: number, move: number, piece: string }
+ */
+function getBlockingMoves(color, kingPos) {
+  let blockingMoves = [];
+  
+  // Loop over all board squares.
+  for (let pos = 0; pos < gameObj.squares.length; pos++) {
+    let piece = gameObj.squares[pos];
+    
+    // Process only squares that contain a piece of the given color,
+    // and skip the king.
+    if (piece !== "" && piece[0] === color && !piece.endsWith("K")) {
+      
+      // Determine possible moves for this piece based on its type.
+      let possibleMoves = [];
+      
+      // Assuming your notation:
+      // "P" for Pawn, "Q" for Queen, "R" for Rook, "B" or "Sh" for Bishop,
+      // "N" for Knight (or "Kn" as in your earlier code).
+      if (piece.endsWith("P")) {
+        possibleMoves = genPawnMoves(pos, piece, gameObj.squares);
+      } else if (piece.endsWith("Q")) {
+        possibleMoves = genQueenMoves(pos, gameObj.squares);
+      } else if (piece.endsWith("R")) {
+        possibleMoves = genRookMoves(pos, gameObj.squares);
+      } else if (piece.endsWith("B") || piece.endsWith("Sh")) {
+        possibleMoves = genBishopMoves(pos, gameObj.squares);
+      } else if (piece.includes("N")) { // covers "WN", "BN", "WKn", etc.
+        possibleMoves = genKnightMoves(pos, gameObj.squares);
+      }
+      
+      // For each possible move, simulate it and check if it resolves the check.
+      for (let move of possibleMoves) {
+        // Simulate the move for the piece.
+        let newState = simulateMove(pos, move, piece);
+        
+        // Find the new king position after the move.
+        // (In most cases, the king's position remains unchanged since this piece isn't the king.)
+        let newKingPos = findKingPosition(color, newState);
+        
+        // Get the list of squares attacked by the opponent.
+        let attackers = checkSquare(color, newState);
+        
+        // If the king is no longer attacked, then this move resolves the check.
+        if (!attackers.includes(newKingPos)) {
+          blockingMoves.push({
+            piecePosition: pos,
+            move: move,
+            piece: piece
+          });
+        }
+      }
+    }
+  }
+  
+  return blockingMoves;
+}
 
